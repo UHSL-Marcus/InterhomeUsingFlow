@@ -1,0 +1,54 @@
+If we want this as a scaleable home solution, with limitless amout of customers/users. We can limit the amount of cloud storage needed.
+Rather than each object updating the webservice, the main controller can hold the state of the peripherals. 
+The peripherals can push an update to the controller if they experience any changes in state and the controller can send commands to the peripherals.
+
+Where flow comes in:
+Flow can facilliate communication between the user interactable devices (android/IOS apps, touchscreen board, linux PC) and the controller board.
+The house state really doesn't even need to ever touch the cloud. As long as the main controller is online, the state can be accessed and controlled by the user, 
+using their interactive device from anywhere with an internet connection.
+
+What will the cloud be used for?
+
+Flow cloud allows the distintion between users/devices and users who own devices. Therefore users can have settings saved on the flowcloud which will be automatically used if they add new hardware (new controller etc)
+replaceing a part of the hardware will be work as if nothing happened. 
+To extend this, there can also be manufacturer and licencee settings which are stored on the cloud and used as defaults when the user does not have settings customised.  
+What settings these are exactly is to be determianed.
+
+HomeController (ci40):
+Sits and waits for messages be they heartbeats, commands or data. 
+Stores the state of the peripherals attached to it. 
+Reacts to commands from the UI device/users interactive device. Commands such as turn on light x or turn off light y. 
+reacts to data coming from peripherals: the peripheral's new state e.g. I am now ON, or I am overheating. 
+reacts to heartbeats or lack thereof coming from peripherals. Lack of heartbeat suggests something has gone wrong. A new unrecognised heartbeat might be a new peripheral, act accordingly
+
+Sends commands to peripherals, say the user wants a certain temp in a certain room, if the tempurature sensor detects the wrong tempurature, the board should send commands to the appropiate heating or cooling peripheral
+Maybe tracking homeowner movement, turn on and off lights and or heating etc depending on where movement is detected
+
+Communication with peripherals can be via many ways, zigbee, 6lowpan or wifi/internet (using flow). these communication protocols will be abstracted so the controller logic just gets the same inputs and can send the same
+format outputs regardless of the kind of communication is used.
+
+
+Peripherals:
+Sit and wait for commands from the controller.
+Knows its state and recognises when it changes.
+push change notifications to the controller. 
+
+
+User interactable device:
+graphical representation of the house state. Any other information needed. 
+Control the all the peripherals via appropiate commands (lights: on/off, heaters: temp setting, etc).
+Modify users global flow settings.
+when a new device is detected, user sets it up via this (mainly security, only start working with peripherals the user allows the system to work with) 
+Flow means the house can be controlled from anywhere with an internet connection
+
+
+Example global/house settings: 
+heating times, 
+light times, 
+time periods to notify motion detection, 
+perfered tempurature, 
+the house layout/roomID's 
+
+internal logic:
+House can be split up into rooms each with an ID (and human readable name), when a new peripheral is added: user sets the room it is in, along with any other relevant info.
+ 
