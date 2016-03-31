@@ -4,13 +4,13 @@ The peripherals can push an update to the controller if they experience any chan
 
 Where flow comes in:
 Flow can facilliate communication between the user interactable devices (android/IOS apps, touchscreen board, linux PC) and the controller board.
-The house state really doesn't even need to ever touch the cloud. As long as the main controller is online, the state can be accessed and controlled by the user, 
+The house state really doesn't even need to ever touch the cloud much. As long as the main controller is online, the state can be accessed and controlled by the user, 
 using their interactive device from anywhere with an internet connection.
 
 What will the cloud be used for?
 
-Flow cloud allows the distintion between users/devices and users who own devices. Therefore users can have settings saved on the flowcloud which will be automatically used if they add new hardware (new controller etc)
-replaceing a part of the hardware will be work as if nothing happened. 
+Flow cloud allows the distintion between users/devices and users who own devices. Therefore users can have settings saved on the flowcloud which will be automatically used if they add new hardware (new controller or peripheral etc)
+therefore, replaceing a part of the hardware will be work as if nothing happened. 
 To extend this, there can also be manufacturer and licencee settings which are stored on the cloud and used as defaults when the user does not have settings customised.  
 What settings these are exactly is to be determianed.
 
@@ -24,8 +24,8 @@ reacts to heartbeats or lack thereof coming from peripherals. Lack of heartbeat 
 Sends commands to peripherals, say the user wants a certain temp in a certain room, if the tempurature sensor detects the wrong tempurature, the board should send commands to the appropiate heating or cooling peripheral
 Maybe tracking homeowner movement, turn on and off lights and or heating etc depending on where movement is detected
 
-Communication with peripherals can be via many ways, zigbee, 6lowpan or wifi/internet (using flow). these communication protocols will be abstracted so the controller logic just gets the same inputs and can send the same
-format outputs regardless of the kind of communication is used.
+Communication with peripherals can be via many ways, zigbee, 6lowpan or wifi/internet (using flow). these communication protocols will be abstracted; so the controller logic just gets the same inputs and can send the same
+format outputs regardless of the kind of communication used.
 
 
 Peripherals:
@@ -46,7 +46,7 @@ Example global/house settings:
 heating times, 
 light times, 
 time periods to notify motion detection, 
-perfered tempurature, 
+perfered temperature, 
 the house layout/roomID's 
 
 internal logic:
