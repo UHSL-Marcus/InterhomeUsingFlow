@@ -14,6 +14,8 @@ therefore, replaceing a part of the hardware will be work as if nothing happened
 To extend this, there can also be manufacturer and licencee settings which are stored on the cloud and used as defaults when the user does not have settings customised.  
 What settings these are exactly is to be determianed.
 
+Historical data and possibily the current state can also be pushed to the cloud if needed. 
+
 HomeController (ci40):
 Sits and waits for messages be they heartbeats, commands or data. 
 Stores the state of the peripherals attached to it. 
