@@ -1,0 +1,43 @@
+maybe each peripheral type will tell the Ci40 what commands it accepts, and its data fields/state options. That way Ci40 software wont need to be updated everytime a new peripheral is released.
+Or there are hardcoded devices in the hub code:
+abstract device class and extended child classes for each device.
+
+
+Peripheral class:
+	ID
+	Device Type
+	List of commands
+	State
+	communication options: 6lowpan, wifi, zigbee. whichever protcols are avaialble
+	Room?
+
+	change state value(state value name, new value).
+	get state => returns state as K/V pairs probably
+	get list of commands => returns command list
+	Send command(command). Sends the passed command, trying each communication option until one works.
+	Add to room(room)
+	remove from room
+	get room
+	
+	
+Room Class:
+	ID
+	Name
+	List of devices
+	
+	get list of devices => returns all devices
+	Add Device(device to add)
+	Remove device(device to remove)
+	
+Device Manager:
+	All devices
+	
+	Add device
+	Remove device
+	
+Room Manager:
+	All rooms
+	
+	Add room
+	Remove room
+	
