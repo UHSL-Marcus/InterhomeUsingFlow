@@ -4,43 +4,47 @@
 
 #include "CommandHandler.h"
 
-using namespace std;
+#include <iostream>
 
 CommandHandler::CommandHandler() {
-	bindingCount = 0;
+	
 }
 
-bool CommandHandler::addCallback(char * cmd, CommandCallbackFunction callback) {
+bool CommandHandler::addCallback(char * cmd, CommandCallbackFunction callback, ICommandCallback *parent) {
+	
 	bool success = false;
 	
-	if (bindingCount < MAX_CALLBACKS) {
-		strcpy(callbacks[bindingCount].command, cmd);
-		callbacks[bindingCount].callback = callback;
-		bindingCount++;
-		success = true;
-	}
+	CommandBinding temp;
+	strcpy(temp.command, cmd);
+	temp.callback = callback;
+	temp.parent = parent;
+	callbacks.push_back(temp);
+	success = true;
 	
 	return success;
-	
 }
 
-bool CommandHandler::updateCallack(char * cmd, CommandCallbackFunction callback) {
+bool CommandHandler::updateCallack(char * cmd, CommandCallbackFunction callback, ICommandCallback *parent) {
 	bool success = false;
 	
-	CommandBinding bind = findBinding(cmd);
-	if (bind != null) {
-		bind.callback = callback;
+	vector<CommandBinding> bindings = findBindings(cmd);
+	if (!bindings.empty()) {
+		for (int i = 0; i < bindings.size(); i++) {
+			bindings[i].callback = callback;
+		}
 		success = true;
 	}
 	return success;
 }
 
 bool CommandHandler::handleCmd(char * cmd) {
-	success = false
+	bool success = false;
 	
-	CommandBinding bind = findBinding(cmd)
-	if (bind != NULL) {
-		callbacks[i].callback();
+	vector<CommandBinding> bindings = findBindings(cmd);
+	if (!bindings.empty()) {
+		for (int i = 0; i < bindings.size(); i++) {
+			bindings[i].callback(bindings[i].parent);
+		}
 			
 		success = true;
 	}
@@ -48,15 +52,30 @@ bool CommandHandler::handleCmd(char * cmd) {
 	return success;
 }
 
-CommandBinding findBinding(char * cmd) {
+vector<CommandBinding> CommandHandler::findBindings(char * cmd, ICommandCallback *parent) {
+	vector <CommandBinding> bindings; 
 	
-	for (int i = 0; i < bindingCount; i++) {
+	for (int i = 0; i < callbacks.size(); i++) {
 		size_t cmdLen = strlen(callbacks[i].command);
-		if (strncmp(cmd, callbacks[i].command, cmdLen) == 0 && strlen(cmd) == cmdLen) {
-			return callbacks[i];
+		if (callbacks[i].parent == parent && strncmp(cmd, callbacks[i].command, cmdLen) == 0 && strlen(cmd) == cmdLen) {
+			bindings.push_back(callbacks[i]);
 		}
 	}
-	return NULL;
+	
+	return bindings;
+}
+
+vector<CommandBinding> CommandHandler::findBindings(char * cmd) {
+	vector <CommandBinding> bindings; 
+	
+	for (int i = 0; i < callbacks.size(); i++) {
+		size_t cmdLen = strlen(callbacks[i].command);
+		if (strncmp(cmd, callbacks[i].command, cmdLen) == 0 && strlen(cmd) == cmdLen) {
+			bindings.push_back(callbacks[i]);
+		}
+	}
+	
+	return bindings;
 }
 
 CommandHandler commandHandler;

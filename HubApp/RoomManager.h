@@ -5,20 +5,28 @@
 #ifndef ROOM_MANAGER_H
 #define ROOM_MANAGER_H
 
-#include "CommandHandler.h"
+#include <cstring>
+#include <vector>
 
-class RoomManager {
+#include "CommandHandler.h"
+#include "Room.h"
+
+using std::vector;
+
+class RoomManager : public ICommandCallback {
 	public:
 		RoomManager();
-		void addNewRoom(); // to be a callback method
-		Room*[] getRooms();
+		vector<Room*> getRooms();
 		Room* getRoom(char * id);
-		void removeRoom(); // to be a callback method
+		static void addNewRoom(ICommandCallback *parent);
+		void addNewRoom();
+		static void removeRoom(ICommandCallback *parent);
+		void removeRoom();
 		
 	private:
-		Room** allRooms;
-		int roomCount;
-}
+		vector<Room*> allRooms;
+		int getRoomIndex(char * id);
+};
 
 extern RoomManager roomManager;
 

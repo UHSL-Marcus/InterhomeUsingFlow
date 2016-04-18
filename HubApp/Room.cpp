@@ -2,29 +2,27 @@
 // **************************** Room.cpp ****************************
 /*******************************************************************/
 
+
 #include "Room.h"
 
-using namespace std;
 
 Room::Room(char* _roomID, char* _roomName) {
-	strcpy(roomID, _roomID);
-	stpcpy(roomname, _roomName);
-	deviceCount = 0;
+	roomID = _roomID;
+	roomName = _roomName;
 }
 
 bool Room::addDevice(char * id) {
 	bool success = false;
 	
 	if (!containsDevice(id)) {
-		strcpy(allDevices[deviceCount], id);
-		deviceCount++;
+		allDevices.push_back(id);
 		success = true;
 	}
 	
 	return success;
 }
 
-char** Room::getDevices() {
+vector<char*> Room::getDevices() {
 	return allDevices;
 }
 
@@ -32,30 +30,26 @@ char* Room::getID() {
 	return roomID;
 }
 
-bool removeDevice(char * id) {
+bool Room::removeDevice(char * id) {
 	bool success = false;
 	
-	int idx = getRoomIndex(id);
+	int idx = getDeviceIndex(id);
 	
-	if (idx > -1) {
-		for (int i = idx; i < deviceCount; i++) {
-			allDevices[i] = allDevices[i+1];
-		}
-		deviceCount--;
-		success = true;
-	}
+	//if (idx > -1) 
+		//allDevices.erase(idx);
+	
 	
 	return success;
 }
 
 bool Room::containsDevice(char * id) {
-	return getRoomIndex(id) > -1 ? true : false;
+	return getDeviceIndex(id) > -1 ? true : false;
 }
 
-int getRoomIndex(char * id) {
+int Room::getDeviceIndex(char * id) {
 	int idx = -1;
 	
-	for (int i = 0; i < deviceCount; i++) {
+	for (int i = 0; i < allDevices.size(); i++) {
 		size_t idLen = strlen(allDevices[i]);
 		if (strncmp(allDevices[i], id, idLen) == 0 && strlen(id) == idLen) {
 			idx = i;

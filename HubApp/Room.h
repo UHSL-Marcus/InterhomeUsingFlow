@@ -5,12 +5,16 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include <cstring>
+#include <vector>
+
+using std::vector;
 
 class Room {
 	public:
 		Room(char* _roomID, char* _roomName);
 		bool addDevice(char * id); 
-		char** getDevices();
+		vector<char*> getDevices();
 		bool removeDevice(char * id); 
 		bool containsDevice(char * id);
 		char* getID();
@@ -18,8 +22,8 @@ class Room {
 	private:
 		char * roomID;
 		char * roomName;
-		char ** allDevices;	
-		int deviceCount;
-}
+		vector<char*> allDevices;	
+		int getDeviceIndex(char * id);
+};
 
-#endif /* ROOM_MANAGER_H */
+#endif /* ROOM_H */
