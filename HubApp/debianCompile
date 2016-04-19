@@ -1,1 +1,1 @@
-g++ -g -Wno-write-strings CommandHandler.cpp main.cpp Room.cpp RoomManager.cpp ./pugiXML/pugixml.cpp -o interHomeHubApp-deb
+g++ -g -Wno-write-strings CommandHandler.cpp main.cpp Room.cpp RoomManager.cpp XMLUtil.cpp ./pugiXML/pugixml.cpp -o interHomeHubApp-deb

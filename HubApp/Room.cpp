@@ -6,12 +6,12 @@
 #include "Room.h"
 
 
-Room::Room(char* _roomID, char* _roomName) {
+Room::Room(string _roomID, string _roomName) {
 	roomID = _roomID;
 	roomName = _roomName;
 }
 
-bool Room::addDevice(char * id) {
+bool Room::addDevice(string id) {
 	bool success = false;
 	
 	if (!containsDevice(id)) {
@@ -22,36 +22,38 @@ bool Room::addDevice(char * id) {
 	return success;
 }
 
-vector<char*> Room::getDevices() {
+vector<string> Room::getDevices() {
 	return allDevices;
 }
 
-char* Room::getID() {
+string Room::getID() {
 	return roomID;
 }
+string Room::getName() {
+	return roomName;
+}
 
-bool Room::removeDevice(char * id) {
+bool Room::removeDevice(string id) {
 	bool success = false;
 	
 	int idx = getDeviceIndex(id);
 	
-	//if (idx > -1) 
-		//allDevices.erase(idx);
+	if (idx > -1) 
+		allDevices.erase(allDevices.begin()+idx);
 	
 	
 	return success;
 }
 
-bool Room::containsDevice(char * id) {
+bool Room::containsDevice(string id) {
 	return getDeviceIndex(id) > -1 ? true : false;
 }
 
-int Room::getDeviceIndex(char * id) {
+int Room::getDeviceIndex(string id) {
 	int idx = -1;
 	
 	for (int i = 0; i < allDevices.size(); i++) {
-		size_t idLen = strlen(allDevices[i]);
-		if (strncmp(allDevices[i], id, idLen) == 0 && strlen(id) == idLen) {
+		if (allDevices[i] == id && id.size() == allDevices[i].size()) {
 			idx = i;
 		}
 	}

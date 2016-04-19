@@ -174,7 +174,7 @@ PUGI__NS_BEGIN
 	typedef xml_memory_management_function_storage<int> xml_memory;
 PUGI__NS_END
 
-// String utilities
+// string utilities
 PUGI__NS_BEGIN
 	// Get string length
 	PUGI__FN size_t strlength(const char_t* s)
@@ -2260,8 +2260,8 @@ PUGI__NS_BEGIN
 		return target_length >= length && (target_length < reuse_threshold || target_length - length < target_length / 2);
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool strcpy_insitu(String& dest, Header& header, uintptr_t header_mask, const char_t* source, size_t source_length)
+	template <typename string, typename Header>
+	PUGI__FN bool strcpy_insitu(string& dest, Header& header, uintptr_t header_mask, const char_t* source, size_t source_length)
 	{
 		if (source_length == 0)
 		{
@@ -4237,8 +4237,8 @@ PUGI__NS_BEGIN
 		return true;
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN void node_copy_string(String& dest, Header& header, uintptr_t header_mask, char_t* source, Header& source_header, xml_allocator* alloc)
+	template <typename string, typename Header>
+	PUGI__FN void node_copy_string(string& dest, Header& header, uintptr_t header_mask, char_t* source, Header& source_header, xml_allocator* alloc)
 	{
 		assert(!dest && (header & header_mask) == 0);
 
@@ -4482,8 +4482,8 @@ PUGI__NS_BEGIN
 	}
 
 	// set value with conversion functions
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_ascii(String& dest, Header& header, uintptr_t header_mask, char* buf)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_ascii(string& dest, Header& header, uintptr_t header_mask, char* buf)
 	{
 	#ifdef PUGIXML_WCHAR_MODE
 		char_t wbuf[128];
@@ -4498,8 +4498,8 @@ PUGI__NS_BEGIN
 	#endif
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, int value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, int value)
 	{
 		char_t buf[64];
 		char_t* end = buf + sizeof(buf) / sizeof(buf[0]);
@@ -4508,8 +4508,8 @@ PUGI__NS_BEGIN
 		return strcpy_insitu(dest, header, header_mask, begin, end - begin);
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, unsigned int value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, unsigned int value)
 	{
 		char_t buf[64];
 		char_t* end = buf + sizeof(buf) / sizeof(buf[0]);
@@ -4518,8 +4518,8 @@ PUGI__NS_BEGIN
 		return strcpy_insitu(dest, header, header_mask, begin, end - begin);
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, float value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, float value)
 	{
 		char buf[128];
 		sprintf(buf, "%.9g", value);
@@ -4527,8 +4527,8 @@ PUGI__NS_BEGIN
 		return set_value_ascii(dest, header, header_mask, buf);
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, double value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, double value)
 	{
 		char buf[128];
 		sprintf(buf, "%.17g", value);
@@ -4536,15 +4536,15 @@ PUGI__NS_BEGIN
 		return set_value_ascii(dest, header, header_mask, buf);
 	}
 	
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, bool value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, bool value)
 	{
 		return strcpy_insitu(dest, header, header_mask, value ? PUGIXML_TEXT("true") : PUGIXML_TEXT("false"), value ? 4 : 5);
 	}
 
 #ifdef PUGIXML_HAS_LONG_LONG
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, long long value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, long long value)
 	{
 		char_t buf[64];
 		char_t* end = buf + sizeof(buf) / sizeof(buf[0]);
@@ -4553,8 +4553,8 @@ PUGI__NS_BEGIN
 		return strcpy_insitu(dest, header, header_mask, begin, end - begin);
 	}
 
-	template <typename String, typename Header>
-	PUGI__FN bool set_value_convert(String& dest, Header& header, uintptr_t header_mask, unsigned long long value)
+	template <typename string, typename Header>
+	PUGI__FN bool set_value_convert(string& dest, Header& header, uintptr_t header_mask, unsigned long long value)
 	{
 		char_t buf[64];
 		char_t* end = buf + sizeof(buf) / sizeof(buf[0]);
@@ -7436,7 +7436,7 @@ PUGI__NS_BEGIN
 	};
 PUGI__NS_END
 
-// String class
+// string class
 PUGI__NS_BEGIN
 	class xpath_string
 	{

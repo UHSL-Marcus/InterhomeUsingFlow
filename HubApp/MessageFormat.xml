@@ -1,0 +1,20 @@
+<packet>
+	<guid>
+	<from>
+	<to>
+	<type>message or command type</type>
+	<timestamp>
+	<data>contains further xml nodes pertaining to the command or message type</data>
+</packet>
+
+
+-----New Room ------
+<data>
+	<name>
+</data>
+
+----Remove Room ----
+<data>
+	<id>
+</data>
+

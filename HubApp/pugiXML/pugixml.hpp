@@ -87,7 +87,7 @@ namespace pugi
 	typedef PUGIXML_CHAR char_t;
 
 #ifndef PUGIXML_NO_STL
-	// String type used for operations that work with STL string; depends on PUGIXML_WCHAR_MODE
+	// string type used for operations that work with STL string; depends on PUGIXML_WCHAR_MODE
 	typedef std::basic_string<PUGIXML_CHAR, std::char_traits<PUGIXML_CHAR>, std::allocator<PUGIXML_CHAR> > string_t;
 #endif
 }
@@ -1014,7 +1014,7 @@ namespace pugi
 		xpath_type_none,	  // Unknown type (query failed to compile)
 		xpath_type_node_set,  // Node set (xpath_node_set)
 		xpath_type_number,	  // Number
-		xpath_type_string,	  // String
+		xpath_type_string,	  // string
 		xpath_type_boolean	  // Boolean
 	};
 
