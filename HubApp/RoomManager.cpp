@@ -66,10 +66,9 @@ void RoomManager::removeRoom(XMLParse params) {
 	if (params.GetStringNode(ROOM_ID_PATH, &id)) {
 		
 		int idx = getRoomIndex(id);
-		if (idx > -1) {
-			allRooms[idx]
+		if (idx > -1) 
 			allRooms.erase(allRooms.begin()+idx);
-		}
+		
 			
 	
 	}

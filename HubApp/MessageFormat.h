@@ -23,5 +23,11 @@
 #define ROOM_ID "name"
 #define ROOM_ID_PATH DATA_PATH"/"ROOM_ID
 
+// Device Manager
+#define TEMP_ID "temp_id"
+#define TEMP_ID_PATH DATA"/"TEMP_ID
+
+
+
 
 #endif /* MESSAGE_FORMAT_H */
