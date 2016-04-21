@@ -8,4 +8,4 @@ if ! [ $CI40_CONFIG ]; then
 	export PATH=$TOOLCHAIN_DIR/bin/:$PATH
 fi
 
-mipsel-openwrt-linux-g++ -g -Wno-write-strings CommandHandler.cpp main.cpp Room.cpp RoomManager.cpp XMLUtil.cpp ./pugiXML/pugixml.cpp -o interHomeHubApp-ci40
+mipsel-openwrt-linux-g++ -g -Wno-write-strings CommandHandler.cpp Device.cpp DeviceManager.cpp main.cpp Room.cpp RoomManager.cpp RoomDeviceMapManager.cpp XMLUtil.cpp ./pugiXML/pugixml.cpp-o interHomeHubApp-ci40

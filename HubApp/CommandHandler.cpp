@@ -4,7 +4,7 @@
 
 #include "CommandHandler.h"
 
-#include <iostream>
+/**** Public Functions ***/
 
 CommandHandler::CommandHandler() {}
 
@@ -44,12 +44,13 @@ bool CommandHandler::handleCmd(string cmd, XMLParse params) {
 			bindings[i].callback(bindings[i].parent, params);
 		}
 		
-		std::cout << "handled: " << cmd << "\n";
 		success = true;
 	}
 			
 	return success;
 }
+
+/**** Private Functions ***/
 
 vector<CommandBinding> CommandHandler::findBindings(string cmd, ICommandCallback *parent) {
 	vector <CommandBinding> bindings; 

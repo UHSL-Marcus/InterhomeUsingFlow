@@ -5,8 +5,8 @@
 
 
 #include "RoomManager.h"
-#include <iostream>
 
+/**** Public Functions ***/
 
 RoomManager::RoomManager() {
 	commandHandler.addCallback("AddNewRoom", RoomManager::addNewRoom, this);
@@ -20,25 +20,21 @@ void RoomManager::addNewRoom(XMLParse params) {
 
 	bool success = false;
 	
-	std::cout << "Add Room" << "\n";
+	
 	
 	string name;
 	if (params.GetStringNode(ROOM_NAME_PATH, &name)) {
 	
 		// Need to generate ID, probably from webservice
-		Room room("id", name);
+		Room room(name, name); // temp
 		
-		int idx = getRoomIndex("id");
+		int idx = getRoomIndex(name);
 		if (idx < 0) {
 			allRooms.push_back(room);
 			success = true;
 		}
 	}
 	
-	std::cout << "Rooms:" << "\n";
-	for (int i = 0; i < allRooms.size(); i++) {
-		std::cout << "ID: " << allRooms[i].getID() << " Name: " << allRooms[i].getName() << "\n";
-	}
 	// send success info to requesting device
 }
 
@@ -75,6 +71,8 @@ void RoomManager::removeRoom(XMLParse params) {
 	
 	// send success to requesting device
 }
+
+/**** Private Functions ***/
 
 int RoomManager::getRoomIndex(string id) {
 	int idx = -1;

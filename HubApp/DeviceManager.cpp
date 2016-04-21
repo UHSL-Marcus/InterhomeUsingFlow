@@ -4,6 +4,8 @@
 
 #include "DeviceManager.h"
 
+/**** Public Functions ***/
+
 DeviceManager::DeviceManager() {
 	commandHandler.addCallback("AddPendingDevice", DeviceManager::addPendingDevice, this);
 	commandHandler.addCallback("RemoveDevice", DeviceManager::removeDevice, this);
@@ -36,11 +38,20 @@ void DeviceManager::addPendingDevice(XMLParse params) {
 		
 		if (idx > -1 && getDeviceIndex(id) == -1) {
 			
-			Device device = pendingDevices[idx];
 			// generate GUID for device and add it to it along with any extra info the user sent
-			
-			allDevices.push_back(device);
-			pendingDevices.erase(pendingDevices.begin()+idx);
+			string roomID;
+			string name; 
+			if (params.GetStringNode(ROOM_ID_PATH, &roomID) && params.GetStringNode(DEVICE_NAME, &name)) {
+				
+				Device device = pendingDevices[idx];
+				device.setID(name); // generate GUID for device and add it to it along with any extra info the user sent
+				device.setRoom(roomID);
+				device.setName(name);
+				
+				
+				allDevices.push_back(device);
+				pendingDevices.erase(pendingDevices.begin()+idx);
+			}
 			
 			// send update to ui device
 		}
@@ -63,11 +74,14 @@ void DeviceManager::deviceHeartbeat(XMLParse params) {
 			idx = getPendingDeviceIndex(id);
 			
 			if (idx > -1) {
-				Device device(id); //the device code would use its mac address until a GUID was assinged to it
-				
-				pendingDevices.push_back(device);
-				
-				// send update to UI devices, prompting user to acitvate the pending device
+				string type;
+				if (params.GetStringNode(SENDER_PATH, &type)) {
+					
+					Device device(id, type);
+					pendingDevices.push_back(device); //the device code would use its mac address until a GUID was assinged to it
+					
+					// send update to UI devices, prompting user to acitvate the pending device
+				}
 			}
 			
 			// possibly put in a function for reminders to add device
@@ -85,18 +99,24 @@ void DeviceManager::removeDevice(XMLParse params) {
 	bool success = false;
 	
 	string id;
-	if (params.GetStringNode(ROOM_ID_PATH, &id)) {
+	if (params.GetStringNode(DEVICE_ID_PATH, &id)) {
 		
 		int idx = getDeviceIndex(id);
-		if (idx > -1) 
-			allDevices.erase(allDevices.begin()+idx);
+		if (idx > -1) {
+			if (allDevices[idx].removeFromRoom()) {
+				allDevices.erase(allDevices.begin()+idx);
+			}
+			
+		}
 
 	}
 	
 	// send success to requesting device
 }
 
-int DeviceManagerManager::getDeviceIndex(string id) {
+/**** Private Functions ***/
+
+int DeviceManager::getDeviceIndex(string id) {
 	int idx = -1;
 	for (int i = 0; i < allDevices.size(); i++) {
 		string deviceID = allDevices[i].getID();
@@ -108,7 +128,7 @@ int DeviceManagerManager::getDeviceIndex(string id) {
 	return idx;
 }
 
-int DeviceManagerManager::getPendingDeviceIndex(string id) {
+int DeviceManager::getPendingDeviceIndex(string id) {
 	int idx = -1;
 	for (int i = 0; i < pendingDevices.size(); i++) {
 		string deviceID = pendingDevices[i].getID();

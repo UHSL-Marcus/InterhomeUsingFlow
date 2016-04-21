@@ -10,20 +10,27 @@
 
 -----New Room ------
 <data>
-	<name>
+	<room_name>
 </data>
 
 ----Remove Room ----
 <data>
-	<id>
+	<room_id>
 </data>
 
 ----Add Pending Device ----
 <data>
 	<temp_id>
+	<room_id>
+	<device_name>
+</data>
+
+--- Remove Device ---
+<data>
+	<device_id>
 </data>
 
 ---- Heartbeat ---
 <data>
-	// info
+	<device_type>
 </data>

@@ -17,16 +17,24 @@
 #define DATA_PATH ROOT"/"DATA
 
 // Room Manager
-#define ROOM_NAME "name"
+#define ROOM_NAME "room_name"
 #define ROOM_NAME_PATH DATA_PATH"/"ROOM_NAME
 
-#define ROOM_ID "name"
+#define ROOM_ID "room_id"
 #define ROOM_ID_PATH DATA_PATH"/"ROOM_ID
 
 // Device Manager
 #define TEMP_ID "temp_id"
 #define TEMP_ID_PATH DATA"/"TEMP_ID
 
+#define DEVICE_NAME "device_name"
+#define DEVICE_NAME_PATH DATA_PATH"/"DEVICE_NAME
+
+#define DEVICE_TYPE "device_type"
+#define DEVICE_TYPE_PATH DATA_PATH"/"DEVICE_TYPE
+
+#define DEVICE_ID "device_id"
+#define DEVICE_ID_PATH DATA_PATH"/"DEVICE_ID
 
 
 

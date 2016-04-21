@@ -15,7 +15,7 @@
 using std::vector;
 using std::string;
 
-class DeviceManager {
+class DeviceManager : public ICommandCallback {
 	public:
 		DeviceManager();
 		vector<Device> getDevices();

@@ -3,7 +3,6 @@
 /*******************************************************************/
 
 #include "XMLUtil.h"
-#include <iostream>
 
 using namespace pugi;
 
@@ -32,8 +31,6 @@ bool XMLParse::GetDocument(xml_document& returnDoc) {
 
 bool XMLParse::GetStringNode(string path, string* out) {
 	
-	std::cout << "path: " << path << "\n";
-	
 	bool success = false;
 	string text;
 	
@@ -45,7 +42,6 @@ bool XMLParse::GetStringNode(string path, string* out) {
 		if (node) {
 			text = node.node().child_value();
 			if (text.size() > 0) {
-				std::cout << "text: " << text << "\n";
 				*out = string(text);
 				success = true;
 			}
