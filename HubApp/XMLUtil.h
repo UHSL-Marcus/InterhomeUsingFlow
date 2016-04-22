@@ -7,6 +7,7 @@
 
 #include "pugiXML/pugixml.hpp"
 #include "MessageFormat.h"
+#include <string>
 #include <cstring>
 
 using std::string;

@@ -5,7 +5,7 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include <cstring>
+#include <string>
 #include <vector>
 #include <string>
 

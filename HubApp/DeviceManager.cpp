@@ -16,14 +16,19 @@ vector<Device> DeviceManager::getDevices(){
 	return allDevices;
 }
 
-Device* DeviceManager::getDevice(string id) {
-	Device* device = NULL;
+vector<Device> DeviceManager::getPendingDevices() {
+	return pendingDevices;
+}
+
+bool DeviceManager::getDevice(string id, Device *out) {
 	
 	int idx = getDeviceIndex(id);
-	if (idx > -1)
-		device = &allDevices[idx];
+	if (idx > -1) {
+		*out = allDevices[idx];
+		return true;
+	}
 
-	return device;
+	return false;
 }
 
 void DeviceManager::addPendingDevice(ICommandCallback *parent, XMLParse params){
@@ -31,17 +36,19 @@ void DeviceManager::addPendingDevice(ICommandCallback *parent, XMLParse params){
 }
 
 void DeviceManager::addPendingDevice(XMLParse params) {
-	
+
 	string id;
 	if (params.GetStringNode(TEMP_ID_PATH, &id)) {
+
 		int idx = getPendingDeviceIndex(id);
 		
+
 		if (idx > -1 && getDeviceIndex(id) == -1) {
 			
 			// generate GUID for device and add it to it along with any extra info the user sent
 			string roomID;
 			string name; 
-			if (params.GetStringNode(ROOM_ID_PATH, &roomID) && params.GetStringNode(DEVICE_NAME, &name)) {
+			if (params.GetStringNode(ROOM_ID_PATH, &roomID) && params.GetStringNode(DEVICE_NAME_PATH, &name)) {
 				
 				Device device = pendingDevices[idx];
 				device.setID(name); // generate GUID for device and add it to it along with any extra info the user sent
@@ -64,18 +71,21 @@ void DeviceManager::deviceHeartbeat(ICommandCallback *parent, XMLParse params) {
 }
 
 void DeviceManager::deviceHeartbeat(XMLParse params) {
-	
+
 	string id;
 	if (params.GetStringNode(SENDER_PATH, &id)) {
+		
 		int idx = getDeviceIndex(id);
+		
 		if (idx > -1) {
 			// do heartbeat on device
 		} else {
 			idx = getPendingDeviceIndex(id);
 			
-			if (idx > -1) {
+			if (idx < 0) {
 				string type;
-				if (params.GetStringNode(SENDER_PATH, &type)) {
+				if (params.GetStringNode(DEVICE_TYPE_PATH, &type)) {
+					
 					
 					Device device(id, type);
 					pendingDevices.push_back(device); //the device code would use its mac address until a GUID was assinged to it

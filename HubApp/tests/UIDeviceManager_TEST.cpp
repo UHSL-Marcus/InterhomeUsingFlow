@@ -2,29 +2,26 @@
 // **************************** main.cpp ****************************
 /*******************************************************************/
 
-#include "tests/tests.h"
-#include <iostream>
-#include <string>
-#include <vector>
+#include "UIDeviceManager_TEST.h"
 
-using std::cout;
-using std::string;
-using std::vector;
-
-void printUIDevices() {
-	
-	vector<UIDevice> uidevices = uiDeviceManager.getUIDevices();
-	
-	cout << "\nUI Devices: ";
-	for (int i = 0; i < uidevices.size(); i++) {
-		cout << uidevices[i].getID() + "(" + uidevices[i].getName() + ") ";
+namespace UIDeviceManager_TEST {
+	void printUIDevices() {
+		
+		vector<UIDevice> uidevices = uiDeviceManager.getUIDevices();
+		
+		cout << "\nUI Devices: ";
+		for (int i = 0; i < uidevices.size(); i++) {
+			cout << uidevices[i].getID() + "(" + uidevices[i].getName() + ") ";
+		}
+		
+		cout << "\n";
 	}
-	
-	cout << "\n";
 }
 
+using namespace UIDeviceManager_TEST;
 
-int main(void) {
+
+void doUIDeviceManager_test() {
 	
 	XMLParse add1("<packet><from>uidevice1</from><data><ui_device_name>ui device 1 name</ui_device_name></data></packet>");
 	XMLParse add2("<packet><from>uidevice2</from><data><ui_device_name>ui device 2 name</ui_device_name></data></packet>");
@@ -42,5 +39,4 @@ int main(void) {
 	cout << "removed UI device 1\n";
 	printUIDevices();
 	
-	return 0;
 }

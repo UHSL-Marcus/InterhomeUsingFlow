@@ -1,1 +1,1 @@
-g++ -g -Wno-write-strings CommandHandler.cpp Device.cpp DeviceManager.cpp main.cpp Room.cpp RoomManager.cpp RoomDeviceMapManager.cpp XMLUtil.cpp ./pugiXML/pugixml.cpp -o interHomeHubApp-deb
+g++ -static-libstdc++ -g -Wno-write-strings CommandHandler.cpp Device.cpp DeviceManager.cpp main.cpp Room.cpp RoomManager.cpp RoomDeviceMapManager.cpp UIDevice.cpp UIDeviceManager.cpp XMLUtil.cpp ./pugiXML/pugixml.cpp -o interHomeHubApp-deb

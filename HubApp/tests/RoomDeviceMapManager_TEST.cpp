@@ -2,34 +2,33 @@
 // **************************** main.cpp ****************************
 /*******************************************************************/
 
+#include "RoomDeviceMapManager_TEST.h"
 
-#include "RoomDeviceMapManager.h"
-#include <iostream>
-
-using std::cout;
-
-void printRooms() {
-	cout << "\nRooms:\n";
-	
-	vector<string> rooms = roomDeviceMapManager.getRooms();
-	
-	for (int i = 0; i < rooms.size(); i++) {
+namespace RoomDeviceMapManager_TEST {
+	void printRooms() {
+		cout << "\nRooms:\n";
 		
-		cout << rooms[i] << " => ";
+		vector<string> rooms = roomDeviceMapManager.getRooms();
 		
-		vector<string> devices;
-		
-		if (roomDeviceMapManager.getRoomDevices(rooms[i], &devices)) {
-			for (int s = 0; s < devices.size(); s++) {
-				cout << devices[s] + "\n";
+		for (int i = 0; i < rooms.size(); i++) {
+			
+			cout << rooms[i] << " => ";
+			
+			vector<string> devices;
+			
+			if (roomDeviceMapManager.getRoomDevices(rooms[i], &devices)) {
+				for (int s = 0; s < devices.size(); s++) {
+					cout << devices[s] + "\n";
+				}
 			}
+			
+			cout << "\n";
 		}
-		
-		cout << "\n";
 	}
 }
+using namespace RoomDeviceMapManager_TEST;
 
-int main(void) {
+void doRoomDeviceMapManager_test() {
 	
 	
 	roomDeviceMapManager.addRoom("room1");
@@ -57,5 +56,4 @@ int main(void) {
 	cout << "removed room1\n";
 	printRooms();
 	
-	return 0;
 }

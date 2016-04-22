@@ -5,7 +5,7 @@
 #ifndef ROOM_DEVICE_MAP_MANAGER_H
 #define ROOM_DEVICE_MAP_MANAGER_H
 
-#include <cstring>
+#include <string>
 #include <vector>
 #include <map>
 

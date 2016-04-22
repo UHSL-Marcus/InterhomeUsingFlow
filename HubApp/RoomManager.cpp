@@ -42,14 +42,15 @@ vector<Room> RoomManager::getRooms() {
 	return allRooms;
 }
 
-Room* RoomManager::getRoom(string id) {
-	Room *room = NULL;
-	
-	int idx = getRoomIndex(id);
-	if (idx > -1)
-		room = &allRooms[idx];
+bool RoomManager::getRoom(string id, Room *out) {
 
-	return room;
+	int idx = getRoomIndex(id);
+	if (idx > -1) {
+		*out = allRooms[idx];
+		return true;
+	}
+
+	return false;
 }
 
 void RoomManager::removeRoom(ICommandCallback *parent, XMLParse params) {

@@ -4,7 +4,7 @@
 #ifndef COMMAND_HANDLER_H
 #define COMMAND_HANDLER_H
 
-#include <cstring>
+#include <string>
 #include <vector>
 
 #include "XMLUtil.h"
@@ -62,10 +62,12 @@ class CommandHandler
 			* @param params		XMLParse object holding the command infomation
 			*/
 		bool handleCmd(string cmd, XMLParse params);
+
 	private:
-		std::vector<CommandBinding> callbacks;
-		std::vector<CommandBinding> findBindings(string cmd);
-		std::vector<CommandBinding> findBindings(string cmd, ICommandCallback *parent);
+		vector<CommandBinding> callbacks;
+		vector<CommandBinding> findBindings(string cmd);
+		vector<CommandBinding> findBindings(string cmd, ICommandCallback *parent);
+
 };
 
 /** The refrence of CommandHandler to be used.

@@ -34,3 +34,13 @@
 <data>
 	<device_type>
 </data>
+
+---- remove UI device ----
+<data>
+	<ui_device_id>
+</data>
+
+---- Add UI Device ----
+<data>
+	<ui_device_name>
+</data>

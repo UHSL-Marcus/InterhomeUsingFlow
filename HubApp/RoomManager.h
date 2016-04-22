@@ -5,7 +5,7 @@
 #ifndef ROOM_MANAGER_H
 #define ROOM_MANAGER_H
 
-#include <cstring>
+#include <string>
 #include <vector>
 
 #include "CommandHandler.h"
@@ -18,18 +18,20 @@ using std::string;
 class RoomManager : public ICommandCallback {
 	public:
 		RoomManager();
-		/** Get all the rooms stored.
+		
+		/** Get COPY of the vector with all the rooms stored. Modifing this returned vector will NOT effect the stored rooms!
 			*
 			* @return 	A vector holding all the room objects
 			*/
 		vector<Room> getRooms();
 		
-		/** Get a single room.
+		/** Get a COPY of a single room. Modifing this room will not effected the room store.
 			*
 			* @param id 	Room ID
-			* @return 		A pointer to the room (can be null if room ID does not exist)
+			* @param *out	pinter to a room object, to hold the copy 	
+			* @return bool 	Room was succesfully found
 			*/
-		Room* getRoom(string id);
+		bool getRoom(string id, Room *out);
 		
 		/** Static callback function for the command to add a new room.
 			* This function only calls the correspoding member function.

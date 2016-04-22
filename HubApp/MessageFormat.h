@@ -25,7 +25,7 @@
 
 // Device Manager
 #define TEMP_ID "temp_id"
-#define TEMP_ID_PATH DATA"/"TEMP_ID
+#define TEMP_ID_PATH DATA_PATH"/"TEMP_ID
 
 #define DEVICE_NAME "device_name"
 #define DEVICE_NAME_PATH DATA_PATH"/"DEVICE_NAME
@@ -35,6 +35,13 @@
 
 #define DEVICE_ID "device_id"
 #define DEVICE_ID_PATH DATA_PATH"/"DEVICE_ID
+
+// UI Device Manager
+#define UI_DEVICE_ID "ui_device_id"
+#define UI_DEVICE_ID_PATH DATA_PATH"/"UI_DEVICE_ID
+
+#define UI_DEVICE_NAME "ui_device_name"
+#define UI_DEVICE_NAME_PATH DATA_PATH"/"UI_DEVICE_NAME
 
 
 
