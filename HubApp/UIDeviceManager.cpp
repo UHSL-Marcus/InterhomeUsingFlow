@@ -3,13 +3,14 @@
 /*******************************************************************/
 
 #include "UIDeviceManager.h"
-#include <iostream>
-
-using std::cout;
 
 /**** Public Functions ***/
 
 UIDeviceManager::UIDeviceManager() {
+	
+}
+
+void UIDeviceManager::setCommandCallbacks() {
 	commandHandler.addCallback("AddUIDevice", UIDeviceManager::addUIDevice, this);
 	commandHandler.addCallback("RemoveUIDevice", UIDeviceManager::removeUIDevice, this);
 }
@@ -19,20 +20,17 @@ void UIDeviceManager::addUIDevice(ICommandCallback *parent, XMLParse params) {
 }
 
 void UIDeviceManager::addUIDevice(XMLParse params) {
-	cout << " \n adding new UI device";
+
 	bool success = false;
 	
 	string name;
 	string id; 
 	if (params.GetStringNode(UI_DEVICE_NAME_PATH, &name) && params.GetStringNode(SENDER_PATH, &id)) {
-		cout << " :: UI Device ID: " << id << " :: UI Device Name: " << name;
 	
-		
 		UIDevice uiDevice(id, name); 
 		
 		int idx = getUIDeviceIndex(id);
 		if (idx < 0) {
-			cout << " :: UI Device IDX: " << idx;
 			allUIDevices.push_back(uiDevice);
 			success = true;
 		}
@@ -46,16 +44,15 @@ void UIDeviceManager::removeUIDevice(ICommandCallback *parent, XMLParse params) 
 }
 
 void UIDeviceManager::removeUIDevice(XMLParse params) {
-	cout << " \n removeing UI Device";
+
 	bool success = false;
 	
 	string id;
 	if (params.GetStringNode(UI_DEVICE_ID_PATH, &id)) {
-		cout << " :: UI Device ID: " << id;
+
 		
 		int idx = getUIDeviceIndex(id);
 		if (idx > -1) {
-			cout << " :: UI Device IDX: " << idx;
 			allUIDevices.erase(allUIDevices.begin()+idx);
 			
 			

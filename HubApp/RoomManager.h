@@ -19,6 +19,11 @@ class RoomManager : public ICommandCallback {
 	public:
 		RoomManager();
 		
+		/** Add the callback functions pairs to the command handler
+			*
+			*/
+		void setCommandCallbacks();
+		
 		/** Get COPY of the vector with all the rooms stored. Modifing this returned vector will NOT effect the stored rooms!
 			*
 			* @return 	A vector holding all the room objects

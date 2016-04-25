@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "CommandHandler.h"
-#include "Device.h"
+#include "Device_Socket.h"
 #include "XMLUtil.h"
 
 using std::vector;
@@ -21,6 +21,11 @@ class DeviceManager : public ICommandCallback {
 			*
 			*/
 		DeviceManager();
+		
+		/** Add the callback functions pairs to the command handler
+			*
+			*/
+		void setCommandCallbacks();
 		
 		/** Get COPY of the vector with all the devices stored. Modifing this returned vector will NOT effect the stored devices!
 			*
@@ -34,10 +39,10 @@ class DeviceManager : public ICommandCallback {
 			*/
 		vector<Device> getPendingDevices();
 		
-		/** Get a COPY of a single device. Modifing this device will not effected the device store.
+		/** Get a COPY of a single device. Modifing this device will not effect the device store.
 			*
 			* @param id 	Device ID
-			* @param *out	pinter to a device object, to hold the copy 	
+			* @param *out	Pointer to a device object, to hold the copy 	
 			* @return bool 	Device was succesfully found
 			*/
 		bool getDevice(string id, Device *out);

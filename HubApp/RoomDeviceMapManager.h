@@ -66,7 +66,7 @@ class RoomDeviceMapManager {
 			*/
 		bool getDeviceRoom(string id, string* out);
 		
-		/** get a COPY of the vector of devices mapped to a room. Modifing this returned vector will NOT effect the map!
+		/** Get a COPY of the vector of devices mapped to a room. Modifing this returned vector will NOT effect the map!
 			*
 			* @param id 	ID of the room
 			* @param *out	pointer to vector<string> to contain the returned device collection

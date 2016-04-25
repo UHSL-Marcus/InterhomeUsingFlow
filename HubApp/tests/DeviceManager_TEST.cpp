@@ -5,6 +5,7 @@
 #include "DeviceManager_TEST.h"
 
 namespace DeviceManager_TEST {
+	
 	void printRooms() {
 		cout << "\nRoom device mapping:\n";
 		
@@ -50,6 +51,7 @@ using namespace DeviceManager_TEST;
 
 
 void doDeviceManager_test() {
+	
 	
 	XMLParse add1("<packet><data><room_name>room1</room_name></data></packet>");
 	XMLParse add2("<packet><data><room_name>room2</room_name></data></packet>");

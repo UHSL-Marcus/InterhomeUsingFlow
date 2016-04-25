@@ -7,6 +7,10 @@
 /**** Public Functions ***/
 
 DeviceManager::DeviceManager() {
+	
+}
+
+void DeviceManager::setCommandCallbacks() {
 	commandHandler.addCallback("AddPendingDevice", DeviceManager::addPendingDevice, this);
 	commandHandler.addCallback("RemoveDevice", DeviceManager::removeDevice, this);
 	commandHandler.addCallback("DeviceHeartbeat", DeviceManager::deviceHeartbeat, this);
@@ -87,7 +91,7 @@ void DeviceManager::deviceHeartbeat(XMLParse params) {
 				if (params.GetStringNode(DEVICE_TYPE_PATH, &type)) {
 					
 					
-					Device device(id, type);
+					Device_Socket device(id);
 					pendingDevices.push_back(device); //the device code would use its mac address until a GUID was assinged to it
 					
 					// send update to UI devices, prompting user to acitvate the pending device

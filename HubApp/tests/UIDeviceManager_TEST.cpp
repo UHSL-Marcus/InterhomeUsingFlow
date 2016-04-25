@@ -5,6 +5,8 @@
 #include "UIDeviceManager_TEST.h"
 
 namespace UIDeviceManager_TEST {
+	bool addedCommands = false;
+	
 	void printUIDevices() {
 		
 		vector<UIDevice> uidevices = uiDeviceManager.getUIDevices();
@@ -22,6 +24,11 @@ using namespace UIDeviceManager_TEST;
 
 
 void doUIDeviceManager_test() {
+	
+	if(!addedCommands) {
+		uiDeviceManager.setCommandCallbacks();
+			addedCommands = true;
+	}
 	
 	XMLParse add1("<packet><from>uidevice1</from><data><ui_device_name>ui device 1 name</ui_device_name></data></packet>");
 	XMLParse add2("<packet><from>uidevice2</from><data><ui_device_name>ui device 2 name</ui_device_name></data></packet>");

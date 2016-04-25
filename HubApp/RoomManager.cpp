@@ -9,6 +9,10 @@
 /**** Public Functions ***/
 
 RoomManager::RoomManager() {
+
+}
+
+void RoomManager::setCommandCallbacks() {
 	commandHandler.addCallback("AddNewRoom", RoomManager::addNewRoom, this);
 	commandHandler.addCallback("RemoveRoom", RoomManager::removeRoom, this);
 }

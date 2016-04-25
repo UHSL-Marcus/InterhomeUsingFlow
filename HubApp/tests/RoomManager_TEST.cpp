@@ -6,6 +6,8 @@
 
 
 namespace RoomManager_TEST {
+	
+	
 	void printRooms() {
 		
 		cout << "\nrooms: ";
@@ -24,6 +26,7 @@ using namespace RoomManager_TEST;
 
 void doRoomManager_test() {
 	
+
 	XMLParse add1("<packet><data><room_name>room1</room_name></data></packet>");
 	XMLParse add2("<packet><data><room_name>room2</room_name></data></packet>");
 	XMLParse remove("<packet><data><room_id>room1</room_id></data></packet>");

@@ -7,10 +7,7 @@
 
 /**** Public Functions ***/
 
-Room::Room(string _roomID, string _roomName) {
-	roomID = _roomID;
-	roomName = _roomName;
-	
+Room::Room(string _roomID, string _roomName) : roomID(_roomID), roomName(_roomName) {
 	roomDeviceMapManager.addRoom(roomID);
 }
 
