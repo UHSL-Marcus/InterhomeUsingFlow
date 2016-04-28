@@ -53,10 +53,10 @@ void doDevice_test() {
 	cout << "\n Added Room \n";
 	printRooms();
 	
-	Device_Socket device("socket_device1");
+	Device_Socket device("socket_device1MAC");
 	cout << "\ncreated device\n";
 	
-	cout << "\n Device ID is: " << device.getID();
+	cout << "\n Device MAC is: " << device.getMAC();
 	cout << "\n Device Type is: " << device.getType();
 	cout << "\n Commands are: ";
 	vector<string> cmds = device.getCommands();
@@ -65,8 +65,8 @@ void doDevice_test() {
 	}
 	printState(device);
 	
-	device.setID("socket_device_newID");
-	cout << "\n changed ID to 'socket_device_newID', DeviceID: " << device.getID();
+	device.setID("socket_deviceID");
+	cout << "\n set ID to 'socket_deviceID', DeviceID: " << device.getID();
 	
 	device.setName("socket_device_name");
 	cout << "\n set name to 'socket_device_name', DeviceName: " << device.getName();

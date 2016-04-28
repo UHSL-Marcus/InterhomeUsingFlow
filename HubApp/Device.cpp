@@ -8,7 +8,7 @@
 /**** Public Functions ***/
 
 
-Device::Device(string id, string type, string stateList) : deviceID(id), deviceType(type) {
+Device::Device(string mac, string type, string stateList) : deviceMAC(mac), deviceType(type) {
 	
 	string allStates = GENERAL_STATE_LIST + string(",") + stateList;
 	size_t current;
@@ -27,6 +27,10 @@ void Device::setID(string id) {
 	deviceID = id;
 }
 
+void Device::setMAC(string mac) {
+	deviceMAC = mac;
+}
+
 void Device::setName(string name) {
 	deviceName = name;
 }
@@ -37,6 +41,10 @@ void Device::setRoom(string room_id) {
 
 string Device::getID() {
 	return deviceID;
+}
+
+string Device::getMAC() {
+	return deviceMAC;
 }
 
 string Device::getName() {
@@ -86,6 +94,14 @@ bool Device::getStateValue(string name, string *out) {
 
 vector<string> Device::getCommands() {
 	return commands;
+}
+
+void Device::setcommunicationProtocols(vector<string> protocols) {
+	communicationProtocols = protocols;
+}
+		
+vector<string> Device::getcommunicationProtocols() {
+	return communicationProtocols;
 }
 
 bool Device::changeStateValue(string name, string value) {

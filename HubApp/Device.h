@@ -24,13 +24,19 @@ class Device {
 			*@param type 		The device type
 			*@param stateList 	Comma deliminated list of the non-general statefields required
 			*/
-		Device(string id, string type, string stateList);
+		Device(string mac, string type, string stateList);
 		
 		/** Set the ID of this device
 			*
 			*@param id 			The new device ID
 			*/
 		void setID(string id);
+		
+		/** Set the MAC of this device
+			*
+			*@param mac 		The new device MAC
+			*/
+		void setMAC(string mac);
 		
 		/** Set the name of this device
 			*
@@ -49,6 +55,12 @@ class Device {
 			*@return string 	The device ID
 			*/
 		string getID();
+		
+		/** Get the MAC of this device
+			*
+			*@return string 	The device MAC
+			*/
+		string getMAC();
 		
 		/** Get the name of this device
 			*
@@ -100,6 +112,18 @@ class Device {
 			*/
 		vector<string> getCommands();
 		
+		/** Set the communication protocols available for this device
+			*
+			*@param vector<string> 	List of communication protocols
+			*/
+		void setcommunicationProtocols(vector<string> protocols);
+		
+		/** Get a list of the communication protocols available for this device
+			*
+			*@return vector<string> 	List of available communication protocols
+			*/
+		vector<string> getcommunicationProtocols();
+		
 		/** Change a state value on this device
 			*
 			*@param string 	Field name
@@ -125,9 +149,11 @@ class Device {
 	protected:
 		vector<string> commands;
 		map<string,string> state;
+		vector<string> communicationProtocols;
 		
 	private:
 		string deviceID;
+		string deviceMAC;
 		string deviceName;
 		string deviceType;
 		bool getStateFieldIterator(string name, map<string,string>::iterator* out);

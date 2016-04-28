@@ -4,7 +4,7 @@
 
 #include "Device_Socket.h"
 
-Device_Socket::Device_Socket( string id ) : super(id, TYPE, SOCKET_STATE_LIST) {
+Device_Socket::Device_Socket( string mac ) : super(mac, TYPE, SOCKET_STATE_LIST) {
 	
 }
 

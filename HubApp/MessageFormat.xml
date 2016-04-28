@@ -18,9 +18,16 @@
 	<room_id>
 </data>
 
+----New Device Presence ----
+<data>
+	<device_type>
+	<primary_communication>
+	<backup_communication> (comma deliminated list)
+<data>
+
 ----Add Pending Device ----
 <data>
-	<temp_id>
+	<mac_addr>
 	<room_id>
 	<device_name>
 </data>
@@ -32,7 +39,7 @@
 
 ---- Heartbeat ---
 <data>
-	<device_type>
+
 </data>
 
 ---- remove UI device ----

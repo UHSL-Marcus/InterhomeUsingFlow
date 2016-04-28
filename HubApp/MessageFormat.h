@@ -24,8 +24,8 @@
 #define ROOM_ID_PATH DATA_PATH"/"ROOM_ID
 
 // Device Manager
-#define TEMP_ID "temp_id"
-#define TEMP_ID_PATH DATA_PATH"/"TEMP_ID
+#define MAC_ADDR "mac_addr"
+#define MAC_ADDR_PATH DATA_PATH"/"MAC_ADDR
 
 #define DEVICE_NAME "device_name"
 #define DEVICE_NAME_PATH DATA_PATH"/"DEVICE_NAME
@@ -35,6 +35,12 @@
 
 #define DEVICE_ID "device_id"
 #define DEVICE_ID_PATH DATA_PATH"/"DEVICE_ID
+
+#define PRIMARY_COMMS "primary_communication"
+#define PRIMARY_COMMS_PATH DATA_PATH"/"PRIMARY_COMMS
+
+#define BACKUP_COMMS "backup_communication"
+#define BACKUP_COMMS_PATH DATA_PATH"/"BACKUP_COMMS
 
 // UI Device Manager
 #define UI_DEVICE_ID "ui_device_id"

@@ -4,6 +4,8 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+#include "cleanup_TEST.h"
+
 #include "Device_TEST.h"
 #include "DeviceManager_TEST.h"
 #include "UIDeviceManager_TEST.h"

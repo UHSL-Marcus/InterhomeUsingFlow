@@ -88,11 +88,28 @@ class DeviceManager : public ICommandCallback {
 			* @param params		XMLParse object holding the command infomation
 			*/
 		void deviceHeartbeat(XMLParse params);
+		
+		/** Static callback function for the command announcing a new device.
+			* This function only calls the correspoding member function.
+			*
+			* @param *parent	Pointer to the object that set this callback 
+			* @param params		XMLParse object holding the command infomation 	
+			*/
+		static void newDevicePresence(ICommandCallback *parent, XMLParse params);
+		
+		/** The member function for the command announcing a new device.
+			*
+			* @param params		XMLParse object holding the command infomation
+			*/
+		void newDevicePresence(XMLParse params);
 	private:
 		vector<Device> allDevices;
 		vector<Device> pendingDevices;
-		int getDeviceIndex(string id);
-		int getPendingDeviceIndex(string id);
+		int getDeviceIndexID(string id);
+		int getDeviceIndexMAC(string mac);
+		int getPendingDeviceIndex(string mac);
+		
+		// timer to remove pending devices after a while
 };
 
 extern DeviceManager deviceManager;

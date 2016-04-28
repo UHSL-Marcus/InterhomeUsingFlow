@@ -17,7 +17,7 @@ using std::string;
 class Device_Socket : public Device {
 	
 	public:
-		Device_Socket( string id );
+		Device_Socket( string mac );
 		bool changeStateValue(string name, string value);
 		
 	private:
