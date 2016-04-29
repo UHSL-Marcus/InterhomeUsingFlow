@@ -25,7 +25,7 @@ void UIDeviceManager::addUIDevice(XMLParse params) {
 	
 	string name;
 	string id; 
-	if (params.GetStringNode(UI_DEVICE_NAME_PATH, &name) && params.GetStringNode(SENDER_PATH, &id)) {
+	if (params.getStringNode(M_UI_DEVICE_NAME_PATH, &name) && params.getStringNode(M_SENDER_PATH, &id)) {
 	
 		UIDevice uiDevice(id, name); 
 		
@@ -48,7 +48,7 @@ void UIDeviceManager::removeUIDevice(XMLParse params) {
 	bool success = false;
 	
 	string id;
-	if (params.GetStringNode(UI_DEVICE_ID_PATH, &id)) {
+	if (params.getStringNode(M_UI_DEVICE_ID_PATH, &id)) {
 
 		
 		int idx = getUIDeviceIndex(id);

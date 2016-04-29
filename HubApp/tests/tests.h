@@ -12,6 +12,7 @@
 #include "RoomManager_TEST.h"
 #include "RoomDeviceMapManager_TEST.h"
 #include "CommandHandler_TEST.h"
+#include "XML_TEST.h"
 
 
 #endif /* TESTS_H */

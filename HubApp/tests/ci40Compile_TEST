@@ -8,4 +8,4 @@ if ! [ $CI40_CONFIG ]; then
 	export PATH=$TOOLCHAIN_DIR/bin/:$PATH
 fi
 
-mipsel-openwrt-linux-g++ -static-libstdc++ -g -Wno-write-strings ../CommandHandler.cpp ../Device.cpp ../Device_Socket.cpp ../DeviceManager.cpp ../Room.cpp ../RoomManager.cpp ../RoomDeviceMapManager.cpp ../UIDevice.cpp ../UIDeviceManager.cpp ../XMLUtil.cpp ../pugiXML/pugixml.cpp cleanup_TEST.cpp DeviceManager_TEST.cpp Device_TEST.cpp RoomManager_TEST.cpp RoomDeviceMapManager_TEST.cpp UIDeviceManager_TEST.cpp main_TEST.cpp CommandHandler_TEST.cpp -o interHomeHubApp-ci40_test
+mipsel-openwrt-linux-g++ -static-libstdc++ -g -Wno-write-strings ../CommandHandler.cpp ../Device.cpp ../Device_Socket.cpp ../DeviceManager.cpp ../Room.cpp ../RoomManager.cpp ../RoomDeviceMapManager.cpp ../UIDevice.cpp ../UIDeviceManager.cpp ../XMLUtil.cpp ../pugiXML/pugixml.cpp cleanup_TEST.cpp DeviceManager_TEST.cpp Device_TEST.cpp RoomManager_TEST.cpp RoomDeviceMapManager_TEST.cpp UIDeviceManager_TEST.cpp main_TEST.cpp CommandHandler_TEST.cpp XML_TEST.cpp -o interHomeHubApp-ci40_test

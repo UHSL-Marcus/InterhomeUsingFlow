@@ -6,7 +6,7 @@
 #ifndef DEVICE_SOCKET_H
 #define DEVICE_SOCKET_H
 
-#define TYPE "device_socket"
+#define DEVICE_TYPE "device_socket"
 
 #include "Device.h"
 

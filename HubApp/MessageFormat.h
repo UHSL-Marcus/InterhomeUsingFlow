@@ -3,51 +3,53 @@
 
 
 // General
-#define ROOT "packet"
-#define GUID "guid"
-#define SENDER "from"
-#define RECIPTIENT "to"
-#define TIMESTAMP "timestamp"
-#define DATA "data"
+#define M_ROOT "packet"
+#define M_GUID "guid"
+#define M_SENDER "from"
+#define M_RECIPTIENT "to"
+#define M_TYPE "type"
+#define M_TIMESTAMP "timestamp"
+#define M_DATA "data"
 
-#define GUID_PATH ROOT"/"GUID
-#define SENDER_PATH ROOT"/"SENDER
-#define RECIPTIENT_PATH ROOT"/"RECIPTIENT
-#define TIMESTAMP_PATH ROOT"/"TIMESTAMP
-#define DATA_PATH ROOT"/"DATA
+#define M_GUID_PATH M_ROOT"/"M_GUID
+#define M_SENDER_PATH M_ROOT"/"M_SENDER
+#define M_RECIPTIENT_PATH M_ROOT"/"M_RECIPTIENT
+#define M_TYPE_PATH M_ROOT"/"TYPE
+#define M_TIMESTAMP_PATH M_ROOT"/"M_TIMESTAMP
+#define M_DATA_PATH M_ROOT"/"M_DATA
 
 // Room Manager
-#define ROOM_NAME "room_name"
-#define ROOM_NAME_PATH DATA_PATH"/"ROOM_NAME
+#define M_ROOM_NAME "room_name"
+#define M_ROOM_NAME_PATH M_DATA_PATH"/"M_ROOM_NAME
 
-#define ROOM_ID "room_id"
-#define ROOM_ID_PATH DATA_PATH"/"ROOM_ID
+#define M_ROOM_ID "room_id"
+#define M_ROOM_ID_PATH M_DATA_PATH"/"M_ROOM_ID
 
 // Device Manager
-#define MAC_ADDR "mac_addr"
-#define MAC_ADDR_PATH DATA_PATH"/"MAC_ADDR
+#define M_MAC_ADDR "mac_addr"
+#define M_MAC_ADDR_PATH M_DATA_PATH"/"M_MAC_ADDR
 
-#define DEVICE_NAME "device_name"
-#define DEVICE_NAME_PATH DATA_PATH"/"DEVICE_NAME
+#define M_DEVICE_NAME "device_name"
+#define M_DEVICE_NAME_PATH M_DATA_PATH"/"M_DEVICE_NAME
 
-#define DEVICE_TYPE "device_type"
-#define DEVICE_TYPE_PATH DATA_PATH"/"DEVICE_TYPE
+#define M_DEVICE_TYPE "device_type"
+#define M_DEVICE_TYPE_PATH M_DATA_PATH"/"M_DEVICE_TYPE
 
-#define DEVICE_ID "device_id"
-#define DEVICE_ID_PATH DATA_PATH"/"DEVICE_ID
+#define M_DEVICE_ID "device_id"
+#define M_DEVICE_ID_PATH M_DATA_PATH"/"M_DEVICE_ID
 
-#define PRIMARY_COMMS "primary_communication"
-#define PRIMARY_COMMS_PATH DATA_PATH"/"PRIMARY_COMMS
+#define M_PRIMARY_COMMS "primary_communication"
+#define M_PRIMARY_COMMS_PATH M_DATA_PATH"/"M_PRIMARY_COMMS
 
-#define BACKUP_COMMS "backup_communication"
-#define BACKUP_COMMS_PATH DATA_PATH"/"BACKUP_COMMS
+#define M_BACKUP_COMMS "backup_communication"
+#define M_BACKUP_COMMS_PATH M_DATA_PATH"/"M_BACKUP_COMMS
 
 // UI Device Manager
-#define UI_DEVICE_ID "ui_device_id"
-#define UI_DEVICE_ID_PATH DATA_PATH"/"UI_DEVICE_ID
+#define M_UI_DEVICE_ID "ui_device_id"
+#define M_UI_DEVICE_ID_PATH M_DATA_PATH"/"M_UI_DEVICE_ID
 
-#define UI_DEVICE_NAME "ui_device_name"
-#define UI_DEVICE_NAME_PATH DATA_PATH"/"UI_DEVICE_NAME
+#define M_UI_DEVICE_NAME "ui_device_name"
+#define M_UI_DEVICE_NAME_PATH M_DATA_PATH"/"M_UI_DEVICE_NAME
 
 
 

@@ -27,7 +27,7 @@ void RoomManager::addNewRoom(XMLParse params) {
 	
 	
 	string name;
-	if (params.GetStringNode(ROOM_NAME_PATH, &name)) {
+	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
 	
 		// Need to generate ID, probably from webservice
 		Room room(name, name); // temp
@@ -64,7 +64,7 @@ void RoomManager::removeRoom(XMLParse params) {
 	bool success = false;
 	
 	string id;
-	if (params.GetStringNode(ROOM_ID_PATH, &id)) {
+	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
 		int idx = getRoomIndex(id);
 		if (idx > -1) 

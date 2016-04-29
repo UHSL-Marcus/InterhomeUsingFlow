@@ -44,7 +44,7 @@ void DeviceManager::addPendingDevice(ICommandCallback *parent, XMLParse params){
 void DeviceManager::addPendingDevice(XMLParse params) {
 
 	string mac;
-	if (params.GetStringNode(MAC_ADDR_PATH, &mac)) {
+	if (params.getStringNode(M_MAC_ADDR_PATH, &mac)) {
 		int idx = getPendingDeviceIndex(mac);
 		
 		if (idx > -1 && getDeviceIndexMAC(mac) == -1) {
@@ -52,7 +52,7 @@ void DeviceManager::addPendingDevice(XMLParse params) {
 			// generate GUID for device and add it to it along with any extra info the user sent
 			string roomID;
 			string name; 
-			if (params.GetStringNode(ROOM_ID_PATH, &roomID) && params.GetStringNode(DEVICE_NAME_PATH, &name)) {
+			if (params.getStringNode(M_ROOM_ID_PATH, &roomID) && params.getStringNode(M_DEVICE_NAME_PATH, &name)) {
 
 				Device device = pendingDevices[idx];
 				device.setID(name); // generate GUID for device and add it to it along with any extra info the user sent
@@ -76,7 +76,7 @@ void DeviceManager::newDevicePresence(ICommandCallback *parent, XMLParse params)
 		
 void DeviceManager::newDevicePresence(XMLParse params) {
 	string mac; 
-	if (params.GetStringNode(SENDER_PATH, &mac)) { // before being assigned an ID, a new device will use its mac address as its messaging ID.
+	if (params.getStringNode(M_SENDER_PATH, &mac)) { // before being assigned an ID, a new device will use its mac address as its messaging ID.
 		int idx = getDeviceIndexMAC(mac);
 		
 		if (idx < 0) { // make sure this mac address isn't already registered
@@ -87,7 +87,7 @@ void DeviceManager::newDevicePresence(XMLParse params) {
 				string type;
 				string primary;
 				string backup;
-				if (params.GetStringNode(DEVICE_TYPE_PATH, &type) && params.GetStringNode(PRIMARY_COMMS_PATH, &primary) && params.GetStringNode(BACKUP_COMMS_PATH, &backup)) {
+				if (params.getStringNode(M_DEVICE_TYPE_PATH, &type) && params.getStringNode(M_PRIMARY_COMMS_PATH, &primary) && params.getStringNode(M_BACKUP_COMMS_PATH, &backup)) {
 					
 					Device_Socket device(mac); // the device type will determine which device is created
 
@@ -124,14 +124,14 @@ void DeviceManager::deviceHeartbeat(ICommandCallback *parent, XMLParse params) {
 void DeviceManager::deviceHeartbeat(XMLParse params) {
 
 	string id;
-	if (params.GetStringNode(SENDER_PATH, &id)) {
+	if (params.getStringNode(M_SENDER_PATH, &id)) {
 		
 		int idx = getDeviceIndexID(id);
 		
 		if (idx > -1) {
 			// do heartbeat on device
 			string timestamp;
-			if (params.GetStringNode(TIMESTAMP_PATH, &timestamp)) {
+			if (params.getStringNode(M_TIMESTAMP_PATH, &timestamp)) {
 				allDevices[idx].doHeartbeat(timestamp);
 			}
 		} 
@@ -149,7 +149,7 @@ void DeviceManager::removeDevice(XMLParse params) {
 	bool success = false;
 	
 	string id;
-	if (params.GetStringNode(DEVICE_ID_PATH, &id)) {
+	if (params.getStringNode(M_DEVICE_ID_PATH, &id)) {
 		
 		int idx = getDeviceIndexID(id);
 		if (idx > -1) {
