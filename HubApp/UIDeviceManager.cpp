@@ -54,8 +54,7 @@ void UIDeviceManager::removeUIDevice(XMLParse params) {
 		int idx = getUIDeviceIndex(id);
 		if (idx > -1) {
 			allUIDevices.erase(allUIDevices.begin()+idx);
-			
-			
+
 		}
 
 	}
@@ -76,6 +75,54 @@ bool UIDeviceManager::getUIDevice(string id, UIDevice *out) {
 	}
 
 	return false;
+}
+
+void UIDeviceManager::uiDeviceBool(string id, bool result, string guid) {
+	int idx = getUIDeviceIndex(id);
+	
+	XMLBuild messageXML;
+	messageXML.addStringNode(M_UI_DEVICE_BOOL, (result ? string("1") : string("0")));
+	
+	if (idx > -1) {
+		outgoingCommandHandler.sendCommand("me", id, "UIDeviceBool", messageXML.getXML(), allUIDevices[idx].getCommunicationProtocols(), guid);
+	}
+}
+
+void UIDeviceManager::uiDeviceMessage(string message, string id, string guid) {
+	vector<UIDevice> recipients;
+	
+	if (id == "")
+		recipients = allUIDevices; // can change to all online devices
+	else {
+		int idx = getUIDeviceIndex(id);
+		if (idx > -1) {
+			recipients.push_back(allUIDevices[idx]);
+		}
+	}
+	
+	XMLBuild messageXML;
+	messageXML.addStringNode(M_UI_DEVICE_MESSAGE, message);
+	
+	for (int i = 0; i < recipients.size(); i++) {
+		outgoingCommandHandler.sendCommand("me", recipients[i].getID(), "UIDeviceMessage", messageXML.getXML(), recipients[i].getCommunicationProtocols(), guid);
+	}
+}
+
+void UIDeviceManager::uiDeviceCommand(string cmd, string data, string id, string guid) {
+	vector<UIDevice> recipients;
+	
+	if (id == "")
+		recipients = allUIDevices; // can change to all online devices
+	else {
+		int idx = getUIDeviceIndex(id);
+		if (idx > -1) {
+			recipients.push_back(allUIDevices[idx]);
+		}
+	}
+	
+	for (int i = 0; i < recipients.size(); i++) {
+		outgoingCommandHandler.sendCommand("me", recipients[i].getID(), cmd, data, recipients[i].getCommunicationProtocols(), guid);
+	}
 }
 
 /**** Private Functions ***/

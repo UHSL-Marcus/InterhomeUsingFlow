@@ -20,11 +20,25 @@ class UIDevice {
 			*/
 		UIDevice(string id, string name);
 		void setName(string name);
+		
+		/** Set the communication protocols available for this UI device
+			*
+			*@param vector<string> 	List of communication protocols
+			*/
+		void setCommunicationProtocols(vector<string> protocols);
+		
 		string getID();
 		string getName();
+		
+		/** Get a list of the communication protocols available for this UI device
+			*
+			*@return vector<string> 	List of available communication protocols
+			*/
+		vector<string> getCommunicationProtocols();
 	private:
 		string uiDeviceID;
 		string uiDeviceName;
+		vector<string> communicationProtocols;
 };
 
 #endif /* UI_DEVICE_H */

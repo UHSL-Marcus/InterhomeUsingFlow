@@ -9,7 +9,7 @@
 #define HEARTBEAT "heartbeat_state"
 #define CONNECTED "connected_state"
 
-#define GENERAL_STATE_LIST HEARTBEAT","CONNECTED
+#define GENERAL_STATE_LIST HEARTBEAT "," CONNECTED
 
 // CONNECTED state options
 #define CONNECTED_ON "connected_state_on"
@@ -21,7 +21,7 @@
 #define CURRENT "current_state"
 #define POWER "power_state"
 
-#define SOCKET_STATE_LIST VOLTAGE","CURRENT","POWER
+#define SOCKET_STATE_LIST VOLTAGE "," CURRENT "," POWER
 
 
 #endif /* STATE_H */

@@ -116,13 +116,13 @@ class Device {
 			*
 			*@param vector<string> 	List of communication protocols
 			*/
-		void setcommunicationProtocols(vector<string> protocols);
+		void setCommunicationProtocols(vector<string> protocols);
 		
 		/** Get a list of the communication protocols available for this device
 			*
 			*@return vector<string> 	List of available communication protocols
 			*/
-		vector<string> getcommunicationProtocols();
+		vector<string> getCommunicationProtocols();
 		
 		/** Change a state value on this device
 			*
@@ -138,13 +138,6 @@ class Device {
 			*@return bool 	Heartbeat update successful
 			*/
 		bool doHeartbeat(string timestamp);
-		
-		/** Send a command to this device
-			*
-			*@param string	command
-			*@return bool 	Command successful
-			*/
-		bool sendCommand(string cmd);
 		
 	protected:
 		vector<string> commands;

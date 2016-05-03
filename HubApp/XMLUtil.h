@@ -28,13 +28,26 @@ class XMLParse {
 		/** Get the text within an XML node
 			*
 			* @param path	Xpath query to the desired node
-			* @param out 	Pointer to the string to store the text
+			* @param *out 	Pointer to the string to store the text
 			* @return bool 	operation success
 			*/
 		bool getStringNode(string path, string* out);
 		
+		/** Get the XML from under a node
+			*
+			* @param path	Xpath query to the desired node
+			* @param &out 	Refrence to the string to store the XML output
+			* @return bool 	operation success
+			*/
+		bool getNodeXML(string path, string &out);
+		
+		/** Present the XML in the form of pairs, holding the Xpath to each text node and the text stored in the node
+			*
+			* @param &out	Refrence to the vector to store the pairs
+			* @return bool 	operation success
+			*/
 		bool splitXML(vector<pair<string, string> > &out);
-	
+		
 	private:
 		string source;
 		bool GetDocument(pugi::xml_document& returnDoc);
@@ -46,6 +59,7 @@ class XMLBuild {
 			*
 			* @param root	The name of the root node
 			*/
+		XMLBuild();
 		XMLBuild(string root);
 		
 		/** Add a string node to the XML document
@@ -56,7 +70,20 @@ class XMLBuild {
 			*/
 		bool addStringNode(string path, string text);
 		
+		/** Add XML to the XML document
+			*
+			* @param path	Xpath to the node location
+			* @param xml 	The XML in string form to store under the node
+			* @return bool 	operation success
+			*/
 		bool addXML(string path, string xml);
+		
+		/** Remove a node from the XML document
+			*
+			* @param path	Xpath to the node location
+			* @return bool 	operation success
+			*/
+		bool removeNode(string path);
 		
 		/** Get built XML as a string
 			*
@@ -65,8 +92,7 @@ class XMLBuild {
 		string getXML();
 	private: 
 		string xmlString;
-		string root;
-		bool GetDocumentRoot(pugi::xml_node& rootNode, pugi::xml_document& returnDoc);
+		bool GetDocument(pugi::xml_document& returnDoc);
 };
 
 

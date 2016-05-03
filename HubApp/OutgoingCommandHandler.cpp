@@ -8,9 +8,9 @@ OutgoingCommandHandler::OutgoingCommandHandler() {
 	
 }
 
-bool OutgoingCommandHandler::sendCommand(string from, string to, string cmd, string data, vector<string> protocols, string guid = "") {
-	XMLBuild messageXML(M_ROOT);
+void OutgoingCommandHandler::sendCommand(string from, string to, string cmd, string data, vector<string> protocols, string guid) {
 	
+	XMLBuild messageXML(M_ROOT);
 	
 	messageXML.addStringNode(M_SENDER_PATH, from);
 	messageXML.addStringNode(M_RECIPTIENT_PATH, to);
@@ -25,14 +25,30 @@ bool OutgoingCommandHandler::sendCommand(string from, string to, string cmd, str
 	if (guid == "") {
 		hash<string> str_hash;
 		stringstream ss;
-		ss << from << timestampBuff << rand() % 100 + 1
-		size_t str_hash_out = str_hash(ss..str());
+		ss << from << timestampBuff << rand() % 100 + 1;
+		size_t str_hash_out = str_hash(ss.str());
 		ss.str(string());
 		ss << str_hash_out;
 		guid = ss.str();
 	}
 	messageXML.addStringNode(M_GUID_PATH, guid);
-	messageXML.addStringNode(M_DATA_PATH, guid);
+	
+	if (!messageXML.addXML(M_DATA_PATH, data)) {
+		messageXML.removeNode(M_DATA_PATH);
+		messageXML.addStringNode(M_DATA_PATH, data);
+	}
+	
+	string messageString = messageXML.getXML();
+	
+	// do following in new thread
+	// loop through protocols break once first one sends. 
+	// depending on how the protocol works. ack could be built in to it (FLOW for example) or may have to wait for manual ack using the Commandhandler
+	// need to see how callbacks will work from different threads. 
 	
 	
+	cout << "\n\n ---OUTGOING---\n" << messageString;
+	
+
 }
+
+OutgoingCommandHandler outgoingCommandHandler;

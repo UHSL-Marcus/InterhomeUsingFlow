@@ -6,6 +6,7 @@
 
 #include "RoomManager.h"
 
+
 /**** Public Functions ***/
 
 RoomManager::RoomManager() {
@@ -39,7 +40,13 @@ void RoomManager::addNewRoom(XMLParse params) {
 		}
 	}
 	
-	// send success info to requesting device
+	
+	// send success to UI device 
+	string uiID;
+	string guid;
+	if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) {	
+		uiDeviceManager.uiDeviceBool(uiID, success, guid);
+	}
 }
 
 vector<Room> RoomManager::getRooms() {
@@ -67,14 +74,21 @@ void RoomManager::removeRoom(XMLParse params) {
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
 		int idx = getRoomIndex(id);
-		if (idx > -1) 
+		if (idx > -1) {
 			allRooms.erase(allRooms.begin()+idx);
+			success = true;
+			// send new room configuration to UI or upon recieveing the bool it can request it?
+		}
 		
-			
+		
 	
 	}
 	
-	// send success to requesting device
+	// send success to UI device 
+	string uiID;
+	string guid;
+	if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) 	
+		uiDeviceManager.uiDeviceBool(uiID, success, guid);
 }
 
 /**** Private Functions ***/

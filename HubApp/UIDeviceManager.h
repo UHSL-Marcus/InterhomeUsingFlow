@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "CommandHandler.h"
+#include "Managers_Handlers.h"
 #include "UIDevice.h"
 #include "XMLUtil.h"
 
@@ -68,6 +68,12 @@ class UIDeviceManager : public ICommandCallback {
 			* @return bool 	UIDevice was succesfully found
 			*/
 		bool getUIDevice(string id, UIDevice *out);
+		
+		void uiDeviceBool(string id, bool result, string guid);
+		
+		void uiDeviceMessage(string message, string id = "", string guid = "");
+		
+		void uiDeviceCommand(string cmd, string data, string id = "", string guid = "");
 		
 	private:
 		vector<UIDevice> allUIDevices;

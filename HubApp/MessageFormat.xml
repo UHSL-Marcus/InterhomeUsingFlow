@@ -7,18 +7,22 @@
 	<data>contains further xml nodes pertaining to the command or message type</data>
 </packet>
 
+********Incomming to HUB*********
 
 -----New Room ------
+cmd: AddNewRoom
 <data>
 	<room_name>
 </data>
 
 ----Remove Room ----
+cmd: RemoveRoom
 <data>
 	<room_id>
 </data>
 
 ----New Device Presence ----
+cmd: NewDevicePresence
 <data>
 	<device_type>
 	<primary_communication>
@@ -26,6 +30,7 @@
 <data>
 
 ----Add Pending Device ----
+cmd: AddPendingDevice
 <data>
 	<mac_addr>
 	<room_id>
@@ -33,21 +38,62 @@
 </data>
 
 --- Remove Device ---
+cmd: RemoveDevice
 <data>
 	<device_id>
 </data>
 
 ---- Heartbeat ---
+cmd: DeviceHeartbeat
 <data>
 
 </data>
 
+----Device Command ----
+cmd: DeviceCommand
+<data>
+	<device_id>
+	<device_cmd>
+	<device_cmd_data> (same variable XML as data tag)
+</data>
+
+
 ---- remove UI device ----
+cmd: RemoveUIDevice
 <data>
 	<ui_device_id>
 </data>
 
 ---- Add UI Device ----
+cmd: AddUIDevice
 <data>
 	<ui_device_name>
+</data>
+
+********Outgoing From HUB*********
+
+-----Update Device Settings---
+cmd: DeviceSettingsUpdate
+<data>
+	<device_id>
+</data>
+
+-----New device presence----
+cmd: NewDevicePresence
+<data>
+	<device_type>
+	<device_mac>
+</data>
+
+
+-----UI Device Message ---
+cmd: UIDeviceMessage
+<data>
+	<ui_device_message>
+</data>
+
+-----UI Device Bool ---
+cmd: UIDeviceBool
+<data>
+	<ui_device_bool> (0 or 1);
 </data>

@@ -16,6 +16,10 @@ void UIDevice::setName(string name) {
 	uiDeviceName = name;
 }
 
+void UIDevice::setCommunicationProtocols(vector<string> protocols) {
+	communicationProtocols = protocols;
+}
+
 string UIDevice::getID() {
 	return uiDeviceID;
 }
@@ -23,6 +27,12 @@ string UIDevice::getID() {
 string UIDevice::getName() {
 	return uiDeviceName;
 }
+
+vector<string> UIDevice::getCommunicationProtocols() {
+	return communicationProtocols;
+}
+
+
 
 
 /**** Private Functions ***/

@@ -37,7 +37,7 @@ namespace DeviceManager_TEST {
 		}
 		
 		cout << "\n  Communication Protocols: Primary => ";
-		vector<string> proto = device.getcommunicationProtocols();
+		vector<string> proto = device.getCommunicationProtocols();
 		if (proto.size() > 0) {
 			cout << proto[0] << ", Backup => "; 
 			for (int i = 1; i < proto.size(); i++) {
@@ -79,19 +79,21 @@ using namespace DeviceManager_TEST;
 
 void doDeviceManager_test() {
 	
+	XMLParse addUI("<packet><from>tester</from><data><ui_device_name>ui device 1 name</ui_device_name></data></packet>");
+	commandHandler.handleCmd("AddUIDevice", addUI);
 	
-	XMLParse addRoom1("<packet><data><room_name>room1</room_name></data></packet>");
-	XMLParse addRoom2("<packet><data><room_name>room2</room_name></data></packet>");
+	XMLParse addRoom1("<packet><guid>0</guid></from>tester</from></to>hub</to><data><room_name>room1</room_name></data></packet>");
+	XMLParse addRoom2("<packet><guid>1</guid></from>tester</from></to>hub</to><data><room_name>room2</room_name></data></packet>");
 	
-	XMLParse addDevice1("<packet><from>device1MAC</from><data><device_type>socket</device_type><primary_communication>flow</primary_communication><backup_communication>zigbee,6lowpan</backup_communication></data></packet>");
-	XMLParse addDevice2("<packet><from>device2MAC</from><data><device_type>socket</device_type><primary_communication>zigbee</primary_communication><backup_communication>flow,6lowpan</backup_communication></data></packet>");
+	XMLParse addDevice1("<packet><guid>2</guid></from>tester</from></to>hub</to><from>device1MAC</from><data><device_type>socket</device_type><primary_communication>flow</primary_communication><backup_communication>zigbee,6lowpan</backup_communication></data></packet>");
+	XMLParse addDevice2("<packet><guid>3</guid></from>tester</from></to>hub</to><from>device2MAC</from><data><device_type>socket</device_type><primary_communication>zigbee</primary_communication><backup_communication>flow,6lowpan</backup_communication></data></packet>");
 
-	XMLParse pending1("<packet><data><mac_addr>device1MAC</mac_addr><room_id>room1</room_id><device_name>device1</device_name></data></packet>");
-	XMLParse pending2("<packet><data><mac_addr>device2MAC</mac_addr><room_id>room2</room_id><device_name>device2</device_name></data></packet>");
+	XMLParse pending1("<packet><guid>4</guid></from>tester</from></to>hub</to><data><mac_addr>device1MAC</mac_addr><room_id>room1</room_id><device_name>device1</device_name></data></packet>");
+	XMLParse pending2("<packet><guid>5</guid></from>tester</from></to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>room2</room_id><device_name>device2</device_name></data></packet>");
 	
-	XMLParse heart("<packet><timestamp>a timestamp</timestamp><from>device1</from><data></data></packet>");
+	XMLParse heart("<packet><guid>6</guid></from>tester</from></to>hub</to><timestamp>a timestamp</timestamp><from>device1</from><data></data></packet>");
 	
-	XMLParse remove("<packet><data><device_id>device1</device_id></data></packet>");
+	XMLParse remove("<packet><guid>7</guid></from>tester</from></to>hub</to><data><device_id>device1</device_id></data></packet>");
 	
 	commandHandler.handleCmd("AddNewRoom", addRoom1);
 	commandHandler.handleCmd("AddNewRoom", addRoom2);

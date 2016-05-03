@@ -43,39 +43,88 @@ bool XMLParse::getStringNode(string path, string* out) {
 	
 }
 
-bool nextChild(xml_node &node, vector<pair<string, string> > &out ,string path = "") {
-	cout << "\n\nNext Child (" << node.name() << ")\nPath: " << path;
+bool nextChildNodeXML(xml_node &node, string &outXML) {
+	//cout << "\n\nNext Child";
+	bool success = false;
+	
+	xml_node_type nodeType = node.type();
+	
+	if (nodeType == node_document || nodeType == node_element) {
+		
+		for (xml_node child = node.first_child(); child; child = child.next_sibling())
+		{
+			if (child.type() == node_pcdata) {
+				//cout << "\ntext element";
+				outXML += child.value();
+				//cout << "\noutput: " << outXML;
+				success = true;
+			} else {
+				//cout << "\nnode element";
+				outXML += string("<") + string(child.name()) + string(">");
+				//cout << "\noutput: " << outXML;
+				success = nextChildNodeXML(child, outXML);
+				outXML += string("</") + string(child.name()) + string(">");
+				//cout << "\noutput: " << outXML;
+			}
+		}
+
+	}
+	
+	return success;
+}
+bool XMLParse::getNodeXML(string path, string &out) {
+	//cout << "\n\nNode XML, path: " << path;
+	bool success = false;
+	
+	xml_document doc;
+	if (GetDocument(doc)) {
+		//cout << "\n got doc";
+		xpath_node xNode = doc.select_node(path.c_str());
+		
+		if (xNode) {
+			//cout << "\ngot xNode";
+			xml_node node = xNode.node();
+			
+			if (node) {
+				//cout << "\ngot node";
+				success = nextChildNodeXML(node, out);
+			}
+			
+		}
+
+	}
+	
+	return success;
+}
+
+bool nextChildsplitXML(xml_node &node, vector<pair<string, string> > &out ,string path = "") {
+	//cout << "\n\nNext Child (" << node.name() << ")\nPath: " << path;
 	bool success = false;
 	xml_node_type nodeType = node.type();
 	
 	if (nodeType == node_document || nodeType == node_element) {
-		cout << "\nDoc or Element";
-		xml_node child = node.first_child();
+		//cout << "\nDoc or Element";
 		
 		if (nodeType == node_element)
-				path += string(node.name()) + string("/");
+			path += string(node.name()) + string("/");
 		
-		if (child.type() == node_pcdata) {
-			cout << "\nText element\nPath: " << path.substr(0, path.size()-2) << ", text: " << child.value();
-			out.push_back(std::make_pair(path.substr(0, path.size()-2) ,string(child.value())));
-			cout << "\nvector count: " << out.size();
-			success = true;
-		} else {
+		//cout << "\nnew path: '" << path << "'";
 		
-			cout << "\nnew path: " << path;
-			
-			while (child) {
-				cout << "\nanother child";
-				
-				nextChild(child, out, path);
-
-				child = node.next_sibling();
-				
-				if (out.size() > 10) break;
+		for (xml_node child = node.first_child(); child; child = child.next_sibling())
+		{
+			//cout << "\n\n---interation---";
+			if (child.type() == node_pcdata) {
+				//cout << "\nText element\nPath: " << path.substr(0, path.size()-1) << ", text: " << child.value();
+				out.push_back(std::make_pair(path.substr(0, path.size()-1) ,string(child.value())));
+				//cout << "\nvector count: " << out.size();
+				success = true;
+			} else {
+				//cout << "\nanother child";
+				success = nextChildsplitXML(child, out, path);
 			}
 		}
-		
 	}
+	//cout << "\nSuccess: " << success;
 	return success;
 } 
 bool XMLParse::splitXML(vector<pair<string, string> > &out) {
@@ -83,10 +132,12 @@ bool XMLParse::splitXML(vector<pair<string, string> > &out) {
 	
 	xml_document doc;
 	if (GetDocument(doc)) {
-		success = nextChild(doc, out);
+		success = nextChildsplitXML(doc, out);
 	}
 	return success;
 }
+
+
 
 /******Private Functions *****/
 
@@ -115,36 +166,43 @@ bool XMLParse::GetDocument(xml_document& returnDoc) {
 /****-----XML Build -----****/
 
 /******Public Functions *****/
-
 XMLBuild::XMLBuild(string root) {
-	xmlString = "<" + root + "></" + root + ">";
-	this->root = root;
+		xmlString = "<" + root + "></" + root + ">";
+}
+XMLBuild::XMLBuild() {
+	
 }
 
 bool XMLBuild::addStringNode(string path, string text) {
 	
 	//cout << "\n\nAdding string node. Path: " << path << ", text: " << text;
 	bool success = false;
+	//cout << "\nxmlstring: " << xmlString;
 	
-	xml_node rootNode;
+	vector<string> nodeNames;
+	size_t current;
+	size_t next = -1;
+	do
+	{
+	  current = next + 1;
+	  next = path.find_first_of('/', current);
+	  nodeNames.push_back(path.substr(current, next - current));
+	}
+	while (next != string::npos);
+	
+	if (xmlString.size() < 1) { // if the string is blank then the XML document was inialised with no root node
+		xmlString = "<" + nodeNames[0] + "></" + nodeNames[0] + ">"; // add the first node to the string so the document has something to work with
+	}
+	
 	xml_document doc;
-	if (GetDocumentRoot(rootNode, doc)) {
-		//cout << "\nroot name: " << rootNode.name();
-		
-		vector<string> nodeNames;
-		size_t current;
-		size_t next = -1;
-		do
-		{
-		  current = next + 1;
-		  next = path.find_first_of('/', current);
-		  nodeNames.push_back(path.substr(current, next - current));
-		}
-		while (next != string::npos);
+	if (GetDocument(doc)) {
+		//cout << "\ngot doc";
 		
 		if (nodeNames.size() > 0) {
 			//cout << "\nsplit node names";
-			xml_node currentNode = rootNode;
+			
+			// loop through and append any nodes requires for the path
+			xml_node currentNode = doc;
 			for (int i = 0; i < nodeNames.size(); i++) {
 				//cout << "\ncurrent node name: " << currentNode.name();
 				xml_node nextNode = currentNode.child(nodeNames[i].c_str());
@@ -169,39 +227,51 @@ bool XMLBuild::addStringNode(string path, string text) {
 }
 
 bool XMLBuild::addXML(string path, string xml) {
+	//cout << "\n\nAddXML (" << xml << "), path: " << path;
 	bool success = false;
 	
-	xml_node rootNode;
-	xml_document doc;
-	if (GetDocumentRoot(rootNode, doc)) {
-		//cout << "\nroot name: " << rootNode.name();
+	XMLParse xmlParse(xml);
+	vector<pair<string, string> > xmlVector;
+	if (xmlParse.splitXML(xmlVector)) {
+		//cout << "\nXML split";
 		
-		vector<string> nodeNames;
-		size_t current;
-		size_t next = -1;
-		do
-		{
-		  current = next + 1;
-		  next = path.find_first_of('/', current);
-		  nodeNames.push_back(path.substr(current, next - current));
-		}
-		while (next != string::npos);
-		
-		if (nodeNames.size() > 0) {
-			//cout << "\nsplit node names";
-			xml_node currentNode = rootNode;
-			for (int i = 0; i < nodeNames.size(); i++) {
-				//cout << "\ncurrent node name: " << currentNode.name();
-				xml_node nextNode = currentNode.child(nodeNames[i].c_str());
-				if (!nextNode) {
-					//cout << "\ncreating nextNode (" << nodeNames[i] << ")";
-					nextNode = currentNode.append_child(nodeNames[i].c_str());
-				}
-				currentNode = nextNode;
-			}
-			
+		for (int i = 0; i < xmlVector.size(); i++) {
+			//cout << "\nXML path: " << path + string("/") + xmlVector[i].first << ", text: "  << xmlVector[i].second;
+			if (addStringNode(path + string("/") + xmlVector[i].first, xmlVector[i].second)) {
+				success = true;
+			} else { success = false; break; }
 		}
 	}
+	
+	return success;
+}
+
+bool XMLBuild::removeNode(string path) {
+	//cout << "\n\nRemove node, path: " << path;
+	bool success = false;
+	
+	xml_document doc;
+	if (GetDocument(doc)) {
+		//cout << "\ngot doc";
+		xpath_node xNode = doc.select_node(path.c_str());
+		
+		if (xNode) {
+			//cout << "\ngot xnode";
+			xml_node parent = xNode.parent();
+			if (parent) {
+				//cout << "\ngot parent";
+				success = parent.remove_child(xNode.node());
+				
+				std::stringstream ss;
+				doc.save(ss);
+			
+				xmlString = ss.str();
+			}
+		}
+		
+	}
+	
+	return success;
 }
 
 string XMLBuild::getXML() {
@@ -210,20 +280,21 @@ string XMLBuild::getXML() {
 
 /******Private Functions *****/
 
-bool XMLBuild::GetDocumentRoot(pugi::xml_node& rootNode, xml_document& returnDoc) {
+bool XMLBuild::GetDocument(xml_document& returnDoc) {
 	bool success = false;
 	
 	size_t size = strlen(xmlString.c_str());
+	//cout << "\nsize: " << size;
 	char* buffer = static_cast<char*>(get_memory_allocation_function()(size));
 	memcpy(buffer, xmlString.c_str(), size);
 	
+	//cout << "\nbuffer: " << buffer;
 	
 	xml_parse_result result = returnDoc.load_buffer_inplace_own(buffer, size);
 	
-	if (result) {
-		rootNode = returnDoc.child(root.c_str());
-		success = true;
-	}
+	//cout << "\n result: " << result.description();
+	
+	success = result;
 	
 	return success;
 }

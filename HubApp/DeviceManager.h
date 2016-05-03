@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "CommandHandler.h"
+#include "Managers_Handlers.h"
 #include "Device_Socket.h"
 #include "XMLUtil.h"
 
@@ -102,6 +102,20 @@ class DeviceManager : public ICommandCallback {
 			* @param params		XMLParse object holding the command infomation
 			*/
 		void newDevicePresence(XMLParse params);
+		
+		/** Static callback function for the command to send a command to a device.
+			* This function only calls the correspoding member function.
+			*
+			* @param *parent	Pointer to the object that set this callback 
+			* @param params		XMLParse object holding the command infomation 	
+			*/
+		static void deviceCommand(ICommandCallback *parent, XMLParse params);
+		
+		/** The member function for the command to send a command to a device.
+			*
+			* @param params		XMLParse object holding the command infomation
+			*/
+		void deviceCommand(XMLParse params);
 	private:
 		vector<Device> allDevices;
 		vector<Device> pendingDevices;

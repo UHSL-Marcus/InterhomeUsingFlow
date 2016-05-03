@@ -96,11 +96,11 @@ vector<string> Device::getCommands() {
 	return commands;
 }
 
-void Device::setcommunicationProtocols(vector<string> protocols) {
+void Device::setCommunicationProtocols(vector<string> protocols) {
 	communicationProtocols = protocols;
 }
 		
-vector<string> Device::getcommunicationProtocols() {
+vector<string> Device::getCommunicationProtocols() {
 	return communicationProtocols;
 }
 
@@ -117,10 +117,6 @@ bool Device::changeStateValue(string name, string value) {
 
 bool Device::doHeartbeat(string timestamp) {
 	return changeStateValue(HEARTBEAT, timestamp);
-}
-
-bool Device::sendCommand(string cmd) {
-	return true;
 }
 
 /**** Private Functions ***/#

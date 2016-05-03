@@ -9,6 +9,7 @@
 #include <vector>
 #include <ctime>
 #include <sstream>
+#include <iostream>
 #include "XMLUtil.h"
 #include "MessageFormat.h"
 
@@ -17,12 +18,13 @@ using std::vector;
 using std::time;
 using std::hash;
 using std::stringstream;
+using std::cout;
 
 
 class OutgoingCommandHandler {
 	public:
 		OutgoingCommandHandler();
-		bool sendCommand(string from, string to, string cmd, string data, vector<string> protocols, string guid = "");
+		void sendCommand(string from, string to, string cmd, string data, vector<string> protocols, string guid = "");
 	private:
 	
 };
