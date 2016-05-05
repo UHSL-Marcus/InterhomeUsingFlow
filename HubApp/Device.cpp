@@ -119,7 +119,7 @@ bool Device::doHeartbeat(string timestamp) {
 	return changeStateValue(HEARTBEAT, timestamp);
 }
 
-/**** Private Functions ***/#
+/**** Private Functions ***/
 
 bool Device::getStateFieldIterator(string name, map<string,string>::iterator* out) {
 	map<string,string>::iterator itr = state.find(name);

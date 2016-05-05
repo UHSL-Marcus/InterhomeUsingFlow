@@ -6,7 +6,6 @@
 
 #include "RoomManager.h"
 
-
 /**** Public Functions ***/
 
 RoomManager::RoomManager() {
@@ -25,11 +24,9 @@ void RoomManager::addNewRoom(XMLParse params) {
 
 	bool success = false;
 	
-	
-	
 	string name;
 	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
-	
+		
 		// Need to generate ID, probably from webservice
 		Room room(name, name); // temp
 		
@@ -44,7 +41,7 @@ void RoomManager::addNewRoom(XMLParse params) {
 	// send success to UI device 
 	string uiID;
 	string guid;
-	if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) {	
+	if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) {
 		uiDeviceManager.uiDeviceBool(uiID, success, guid);
 	}
 }

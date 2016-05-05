@@ -17,6 +17,9 @@ XMLParse::XMLParse(string _source) {
 	source = _source;
 }
 
+string XMLParse::getSource() {
+	return source;
+}
 
 bool XMLParse::getStringNode(string path, string* out) {
 	//cout << "((New Node || Path: " << path;
@@ -34,6 +37,33 @@ bool XMLParse::getStringNode(string path, string* out) {
 			if (text.size() > 0) {
 				*out = string(text);
 				success = true;
+			}
+		}
+	}
+	
+	//cout << "))";
+	return success;
+	
+}
+
+bool XMLParse::getStringNodes(string path, vector<string>& out) {
+	//cout << "((New Node || Path: " << path;
+	bool success = false;
+	string text;
+	
+	xml_document doc;
+	if (GetDocument(doc)) {
+		//cout << " || doc exists: " << source;
+		xpath_node_set nodes = doc.select_nodes(path.c_str());
+		
+		if (nodes.first()) {
+			for (xpath_node_set::const_iterator itr = nodes.begin(); itr != nodes.end(); ++itr) {
+				xpath_node node = *itr;
+				text = node.node().child_value();
+				if (text.size() > 0) {
+					out.push_back(text);
+					success = true;
+				}
 			}
 		}
 	}
@@ -90,6 +120,35 @@ bool XMLParse::getNodeXML(string path, string &out) {
 				success = nextChildNodeXML(node, out);
 			}
 			
+		}
+
+	}
+	
+	return success;
+}
+
+bool XMLParse::getNodesXML(string path, vector<string> &out) {
+	//cout << "\n\nNode XML, path: " << path;
+	bool success = false;
+	
+	xml_document doc;
+	if (GetDocument(doc)) {
+		//cout << "\n got doc";
+		xpath_node_set xNodes = doc.select_nodes(path.c_str());
+		
+		if (xNodes.first()) {
+			for (xpath_node_set::const_iterator itr = xNodes.begin(); itr != xNodes.end(); ++itr) {
+				xpath_node xNode = *itr;
+				xml_node node = xNode.node();
+				
+				if (node) {
+					//cout << "\ngot node";
+					string tempXML;
+					success = nextChildNodeXML(node, tempXML);
+					if (success)
+						out.push_back(tempXML);
+				}
+			}
 		}
 
 	}

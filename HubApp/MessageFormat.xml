@@ -57,6 +57,14 @@ cmd: DeviceCommand
 	<device_cmd_data> (same variable XML as data tag)
 </data>
 
+---Device state change ---
+cmd: DeviceStateChanged
+<data>
+	<state_pair>
+		<state_name>
+		<state_value>
+	</state_pair>
+</data>
 
 ---- remove UI device ----
 cmd: RemoveUIDevice

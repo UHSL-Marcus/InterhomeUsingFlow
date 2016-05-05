@@ -44,6 +44,13 @@
 #define M_DEVICE_CMD_DATA "device_cmd_data"
 #define M_DEVICE_CMD_DATA_PATH M_DATA_PATH "/" M_DEVICE_CMD_DATA
 
+#define M_DEVICE_STATE_PAIR "state_pair"
+#define M_DEVICE_STATE_PAIR_PATH M_DATA_PATH "/" M_DEVICE_STATE_PAIR
+
+#define M_DEVICE_STATE_NAME "state_name"
+#define M_DEVICE_STATE_VALUE "state_value"
+
+
 #define M_PRIMARY_COMMS "primary_communication"
 #define M_PRIMARY_COMMS_PATH M_DATA_PATH "/" M_PRIMARY_COMMS
 

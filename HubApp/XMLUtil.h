@@ -33,13 +33,29 @@ class XMLParse {
 			*/
 		bool getStringNode(string path, string* out);
 		
+		/** Get the text within multiple XML nodes that share name and location
+			*
+			* @param path	Xpath query to the desired nodes
+			* @param *out 	Refrence to the vector<string> to store the text
+			* @return bool 	operation success
+			*/
+		bool getStringNodes(string path, vector<string>& out);
+		
+		/** Get the XML from under multiple nodes that share a name and location
+			*
+			* @param path	Xpath query to the desired nodes
+			* @param &out 	Refrence to the vector<string> to store the XML output
+			* @return bool 	operation success
+			*/
+		bool getNodeXML(string path, string &out);
+		
 		/** Get the XML from under a node
 			*
 			* @param path	Xpath query to the desired node
 			* @param &out 	Refrence to the string to store the XML output
 			* @return bool 	operation success
 			*/
-		bool getNodeXML(string path, string &out);
+		bool getNodesXML(string path, vector<string> &out);
 		
 		/** Present the XML in the form of pairs, holding the Xpath to each text node and the text stored in the node
 			*
@@ -47,6 +63,8 @@ class XMLParse {
 			* @return bool 	operation success
 			*/
 		bool splitXML(vector<pair<string, string> > &out);
+		
+		string getSource();
 		
 	private:
 		string source;

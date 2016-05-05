@@ -116,6 +116,21 @@ class DeviceManager : public ICommandCallback {
 			* @param params		XMLParse object holding the command infomation
 			*/
 		void deviceCommand(XMLParse params);
+		
+		/** Static callback function for the command to update the device state.
+			* This function only calls the correspoding member function.
+			*
+			* @param *parent	Pointer to the object that set this callback 
+			* @param params		XMLParse object holding the command infomation 	
+			*/
+		static void deviceStateChange(ICommandCallback *parent, XMLParse params);
+		
+		/** The member function for the command to update the device state.
+			*
+			* @param params		XMLParse object holding the command infomation
+			*/
+		void deviceStateChange(XMLParse params);
+		
 	private:
 		vector<Device> allDevices;
 		vector<Device> pendingDevices;

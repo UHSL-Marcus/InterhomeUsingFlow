@@ -4,7 +4,6 @@
 
 #include "CommandHandler.h"
 
-
 /**** Public Functions ***/
 
 CommandHandler::CommandHandler() {}

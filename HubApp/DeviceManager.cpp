@@ -16,6 +16,7 @@ void DeviceManager::setCommandCallbacks() {
 	commandHandler.addCallback("DeviceHeartbeat", DeviceManager::deviceHeartbeat, this);
 	commandHandler.addCallback("NewDevicePresence", DeviceManager::newDevicePresence, this);
 	commandHandler.addCallback("DeviceCommand", DeviceManager::deviceCommand, this);
+	commandHandler.addCallback("DeviceStateChanged", DeviceManager::deviceStateChange, this);
 }
 
 vector<Device> DeviceManager::getDevices(){
@@ -199,6 +200,44 @@ void DeviceManager::deviceCommand(XMLParse params) {
 		string guid;
 		if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) 	
 			uiDeviceManager.uiDeviceBool(uiID, false, guid);
+	}
+}
+
+void DeviceManager::deviceStateChange(ICommandCallback *parent, XMLParse params) {
+	(static_cast<DeviceManager*>(parent))->deviceStateChange(params);	
+}
+		
+void DeviceManager::deviceStateChange(XMLParse params) {
+	
+	bool success = false;
+	
+	string id;
+	if (params.getStringNode(M_SENDER_PATH, &id)) {
+		
+		int idx = getDeviceIndexID(id);
+		
+		
+		if (idx > -1) {
+			
+			vector<string> statePairs;
+			if (params.getNodesXML(M_DEVICE_STATE_PAIR_PATH, statePairs)) {
+				for (int i = 0; i < statePairs.size(); i++) {
+					XMLParse statePair(statePairs[i]);
+					
+					string stateName;
+					string stateValue;
+					if (statePair.getStringNode(M_DEVICE_STATE_NAME, &stateName) && statePair.getStringNode(M_DEVICE_STATE_VALUE, &stateValue)) {
+						if (allDevices[idx].changeStateValue(stateName, stateValue)) {
+							success = true;
+						} else {// possibly return error to the device, possible to put error correction code in them.}
+					}
+				}
+			}
+		} 
+	}
+
+	if (success) {
+		// send state update for this device to all online UI devices
 	}
 }
 
