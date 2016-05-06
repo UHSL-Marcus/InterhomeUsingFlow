@@ -229,7 +229,9 @@ void DeviceManager::deviceStateChange(XMLParse params) {
 					if (statePair.getStringNode(M_DEVICE_STATE_NAME, &stateName) && statePair.getStringNode(M_DEVICE_STATE_VALUE, &stateValue)) {
 						if (allDevices[idx].changeStateValue(stateName, stateValue)) {
 							success = true;
-						} else {// possibly return error to the device, possible to put error correction code in them.}
+						} else {
+							// possibly return error to the device, possible to put error correction code in them.
+						}
 					}
 				}
 			}
