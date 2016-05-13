@@ -16,20 +16,10 @@ void OutgoingCommandHandler::sendCommand(string from, string to, string cmd, str
 	messageXML.addStringNode(M_RECIPTIENT_PATH, to);
 	messageXML.addStringNode(M_TYPE_PATH, cmd);
 	
-	time_t t = time(0);
-	struct tm now = *gmtime(&t); // UTC time, this is a must
-	char timestampBuff[80];
-	strftime(timestampBuff, sizeof(timestampBuff), "%d/%m/%Y-%X", &now);
-	messageXML.addStringNode(M_TIMESTAMP_PATH, timestampBuff);
+	messageXML.addStringNode(M_TIMESTAMP_PATH, Util::getUTC());
 	
 	if (guid == "") {
-		hash<string> str_hash;
-		stringstream ss;
-		ss << from << timestampBuff << rand() % 100 + 1;
-		size_t str_hash_out = str_hash(ss.str());
-		ss.str(string());
-		ss << str_hash_out;
-		guid = ss.str();
+		guid = Util::getUID(from);
 	}
 	messageXML.addStringNode(M_GUID_PATH, guid);
 	

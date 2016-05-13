@@ -7,17 +7,13 @@
 
 #include <string>
 #include <vector>
-#include <ctime>
-#include <sstream>
 #include <iostream>
 #include "XMLUtil.h"
 #include "MessageFormat.h"
+#include "Util.h"
 
 using std::string;
 using std::vector;
-using std::time;
-using std::hash;
-using std::stringstream;
 using std::cout;
 
 

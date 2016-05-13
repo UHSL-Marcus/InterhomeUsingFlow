@@ -44,6 +44,10 @@ void runTest(int i) {
 			cout << "\n\n----XML Builder Test----\n\n";
 			doXMLBuildTest();
 			break;
+		case 7:
+			cout << "\n\n----HTTP Request Test----\n\n";
+			doHTTPRequest_test();
+			break;
 	}
 		
 	doCleanup();
@@ -58,18 +62,27 @@ int main(void) {
 	
 	
 	
-	cout << "Choose Test:\n0: Room Manager Test\n1: Device Test\n2: Device Manager Test\n3: Room Device Map Manager Test\n4: UI Device Manager Test\n5: Command Handler Test\n6: XML Builder Test\n7: Run All";
+	cout << "\nChoose Test:\n"
+			"0: Room Manager Test\n"
+			"1: Device Test\n"
+			"2: Device Manager Test\n"
+			"3: Room Device Map Manager Test\n"
+			"4: UI Device Manager Test\n"
+			"5: Command Handler Test\n"
+			"6: XML Builder Test\n"
+			"7: HTTP Request Test\n"
+			"8: Run All";
 	int i;
 	
 	while (i != 9) {
 		i = -1;
-		cout << "\nEnter Number (0-7, 9 to quit):";
+		cout << "\nEnter Number (0-8, 9 to quit):";
 		cin >> i;
 		
-		if (i > -1 && i < 7) 
+		if (i > -1 && i < 8) 
 			runTest(i);
-		else if (i == 7) {
-			for (int t = 0; t < 7; t++) {
+		else if (i == 8) {
+			for (int t = 0; t < 8; t++) {
 				runTest(t);
 			}
 		} else if (i != 9) cout << "Out of bounds\n";
