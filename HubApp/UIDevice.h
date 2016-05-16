@@ -19,15 +19,29 @@ class UIDevice {
 			*@param type 		The device type
 			*/
 		UIDevice(string id, string name);
+		
+		/** Set the name of this UI device
+			*
+			*@param name 	The new name
+			*/
 		void setName(string name);
 		
 		/** Set the communication protocols available for this UI device
 			*
-			*@param vector<string> 	List of communication protocols
+			*@param protocols 	List of communication protocols
 			*/
 		void setCommunicationProtocols(vector<string> protocols);
 		
+		/** Get the ID of this UI device
+			*
+			*@return string 	UI Device ID
+			*/
 		string getID();
+		
+		/** Get the Name of this UI device
+			*
+			*@return string 	UI Device Name
+			*/
 		string getName();
 		
 		/** Get a list of the communication protocols available for this UI device

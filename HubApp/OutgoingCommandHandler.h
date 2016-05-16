@@ -20,6 +20,15 @@ using std::cout;
 class OutgoingCommandHandler {
 	public:
 		OutgoingCommandHandler();
+		/** Send a command
+			*
+			*@param from 			ID of sending device
+			*@param to				ID of reciving device
+			*@param cmd				The command string
+			*@param data			Extra data relating to the command (in an XML string)
+			*@param protocols		List of the communication protocols to use, in order of priority
+			*@param guid			The identifier of this message (optional)
+			*/
 		void sendCommand(string from, string to, string cmd, string data, vector<string> protocols, string guid = "");
 	private:
 	

@@ -64,6 +64,10 @@ class XMLParse {
 			*/
 		bool splitXML(vector<pair<string, string> > &out);
 		
+		/** Return the source (XML string) stored
+			*
+			* @return string 	XML string
+			*/
 		string getSource();
 		
 	private:
@@ -75,7 +79,7 @@ class XMLBuild {
 	public:
 		/** Constructor
 			*
-			* @param root	The name of the root node
+			* @param root	The name of the root node (optional)
 			*/
 		XMLBuild();
 		XMLBuild(string root);

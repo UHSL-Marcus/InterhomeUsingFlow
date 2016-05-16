@@ -20,7 +20,7 @@ class Device {
 	public:
 		/** Constructor. This class should not be inialised directly, only ever via a child
 			*
-			*@param id 			Device ID
+			*@param id 			Device MAC Address
 			*@param type 		The device type
 			*@param stateList 	Comma deliminated list of the non-general statefields required
 			*/

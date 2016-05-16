@@ -69,11 +69,30 @@ class UIDeviceManager : public ICommandCallback {
 			*/
 		bool getUIDevice(string id, UIDevice *out);
 		
+		/** Send a boolean message to a UI device
+			*
+			* @param id 	UIDevice ID
+			* @param result	The bool value to send
+			* @param guid 	The message ID this reply refers to			
+			*/
 		void uiDeviceBool(string id, bool result, string guid);
 		
+		/** Send a string message to a UI device
+			*
+			* @param message 	String message to send
+			* @param id			UIDevice ID (optional)
+			* @param guid 		The message ID this message refers to (optional)			
+			*/
 		void uiDeviceMessage(string message, string id = "", string guid = "");
 		
-		void uiDeviceCommand(string cmd, string data, string id = "", string guid = "");
+		/** Send a command to a UI device
+			*
+			* @param cmd 		The command being sent
+			* @param id			Extra data relating to the command (optional)
+			* @param id			UIDevice ID (optional)
+			* @param guid 		The message ID this command refers to (optional)			
+			*/
+		void uiDeviceCommand(string cmd, string data = "", string id = "", string guid = "");
 		
 	private:
 		vector<UIDevice> allUIDevices;
