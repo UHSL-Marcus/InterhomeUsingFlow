@@ -54,7 +54,12 @@ void doXMLBuildTest() {
 	cout << "\ninialised XML with root node: testRoot";
 	cout << "\nXML: " << xmlBuild.getXML();
 	
+	cout << "\nXML with declaration: " << xmlBuild.getXML(false);
+	
 	singleAddTest(xmlBuild, "testRoot/level1/text1", "text1text");
+	
+	xmlBuild.addAttribute("testRoot/level1", "attribute", "value");
+	cout << "\nAdding attribute to \"level1\"\nXML: " << xmlBuild.getXML();
 	
 	singleAddTest(xmlBuild, "testRoot/level1/level2/text2", "text2text");
 	

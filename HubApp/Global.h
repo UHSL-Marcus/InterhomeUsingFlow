@@ -12,6 +12,7 @@ class Global {
 	public: 
 		static string webServiceUsr;
 		static string webServicePwd;
+		static string propertyID;
 };
 
 #endif /* GLOBAL_H */

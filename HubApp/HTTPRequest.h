@@ -10,6 +10,7 @@
 #include <cstring>
 #include "Global.h"
 #include "Util.h"
+#include "XMLUtil.h"
 
 #include <iostream>
 

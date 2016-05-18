@@ -100,6 +100,15 @@ class XMLBuild {
 			*/
 		bool addXML(string path, string xml);
 		
+		/** Add Attribute to the XML document
+			*
+			* @param path		Xpath to the node location
+			* @param attrib 	The attribute name
+			* @param value 		The attribute value
+			* @return bool 		operation success
+			*/
+		bool addAttribute(string path, string attrib, string value);
+		
 		/** Remove a node from the XML document
 			*
 			* @param path	Xpath to the node location
@@ -109,12 +118,15 @@ class XMLBuild {
 		
 		/** Get built XML as a string
 			*
+			* @param raw		True returns the xml string as is. False adds the XML declarations 
 			* @return string 	The built XML
 			*/
-		string getXML();
+		string getXML(bool raw = true);
 	private: 
 		string xmlString;
 		bool GetDocument(pugi::xml_document& returnDoc);
+		bool buildNodes(string path, pugi::xml_node &lastNode, pugi::xml_document &doc);
+		void saveDocument(pugi::xml_document& doc);
 };
 
 

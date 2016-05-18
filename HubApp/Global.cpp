@@ -6,3 +6,4 @@
 
 string Global::webServiceUsr = "";
 string Global::webServicePwd = "";
+string Global::propertyID = "";

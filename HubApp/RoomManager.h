@@ -7,13 +7,16 @@
 
 #include <string>
 #include <vector>
+#include <exception>
 
 #include "Managers_Handlers.h"
 #include "Room.h"
 #include "XMLUtil.h"
+#include "HTTPRequest.h"
 
 using std::vector;
 using std::string;
+using std::exception
 
 class RoomManager : public ICommandCallback {
 	public:

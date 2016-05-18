@@ -232,54 +232,23 @@ XMLBuild::XMLBuild() {
 	
 }
 
+
 bool XMLBuild::addStringNode(string path, string text) {
 	
 	//cout << "\n\nAdding string node. Path: " << path << ", text: " << text;
 	bool success = false;
 	//cout << "\nxmlstring: " << xmlString;
 	
-	vector<string> nodeNames;
-	size_t current;
-	size_t next = -1;
-	do
-	{
-	  current = next + 1;
-	  next = path.find_first_of('/', current);
-	  nodeNames.push_back(path.substr(current, next - current));
-	}
-	while (next != string::npos);
-	
-	if (xmlString.size() < 1) { // if the string is blank then the XML document was inialised with no root node
-		xmlString = "<" + nodeNames[0] + "></" + nodeNames[0] + ">"; // add the first node to the string so the document has something to work with
-	}
-	
 	xml_document doc;
-	if (GetDocument(doc)) {
-		//cout << "\ngot doc";
+	xml_node node;
+	if (buildNodes(path, node, doc)) {
 		
-		if (nodeNames.size() > 0) {
-			//cout << "\nsplit node names";
-			
-			// loop through and append any nodes requires for the path
-			xml_node currentNode = doc;
-			for (int i = 0; i < nodeNames.size(); i++) {
-				//cout << "\ncurrent node name: " << currentNode.name();
-				xml_node nextNode = currentNode.child(nodeNames[i].c_str());
-				if (!nextNode) {
-					//cout << "\ncreating nextNode (" << nodeNames[i] << ")";
-					nextNode = currentNode.append_child(nodeNames[i].c_str());
-				}
-				currentNode = nextNode;
-			}
-			currentNode.append_child(node_pcdata).set_value(text.c_str());
-			
-			std::stringstream ss;
-			doc.save(ss);
-			
-			xmlString = ss.str();
-			
-			success = true;
-		}
+		node.append_child(node_pcdata).set_value(text.c_str());
+		
+		saveDocument(doc);
+		
+		success = true;
+		
 	}
 	
 	return success;
@@ -288,8 +257,26 @@ bool XMLBuild::addStringNode(string path, string text) {
 bool XMLBuild::addXML(string path, string xml) {
 	//cout << "\n\nAddXML (" << xml << "), path: " << path;
 	bool success = false;
+	//cout << "\nxmlstring: " << xmlString;
 	
-	XMLParse xmlParse(xml);
+	xml_document doc;
+	xml_node node;
+	if (buildNodes(path, node, doc)) {
+	
+		// Read XML string into temporary document
+		xml_document tmpDoc;
+		if (tmpDoc.load(xml.c_str()))
+		{
+			node.append_copy(tmpDoc.document_element());
+			
+			saveDocument(doc);
+			
+			success = true;
+			
+		}
+	}
+	
+	/*XMLParse xmlParse(xml);
 	vector<pair<string, string> > xmlVector;
 	if (xmlParse.splitXML(xmlVector)) {
 		//cout << "\nXML split";
@@ -300,9 +287,23 @@ bool XMLBuild::addXML(string path, string xml) {
 				success = true;
 			} else { success = false; break; }
 		}
-	}
+	}*/
 	
 	return success;
+}
+
+bool XMLBuild::addAttribute(string path, string attrib, string value) { 
+	bool success = false;
+	
+	
+	xml_document doc;
+	xml_node node;
+	if (buildNodes(path, node, doc)) {
+		node.append_attribute(attrib.c_str());
+		node.attribute(attrib.c_str()).set_value(value.c_str());
+		
+		saveDocument(doc);
+	}
 }
 
 bool XMLBuild::removeNode(string path) {
@@ -321,10 +322,7 @@ bool XMLBuild::removeNode(string path) {
 				//cout << "\ngot parent";
 				success = parent.remove_child(xNode.node());
 				
-				std::stringstream ss;
-				doc.save(ss);
-			
-				xmlString = ss.str();
+				saveDocument(doc);
 			}
 		}
 		
@@ -333,8 +331,11 @@ bool XMLBuild::removeNode(string path) {
 	return success;
 }
 
-string XMLBuild::getXML() {
-	return xmlString;
+string XMLBuild::getXML(bool raw) {
+	if (raw)
+		return xmlString;
+	else 
+		return string("<?xml version=\"1.0\"?>") + xmlString;
 }
 
 /******Private Functions *****/
@@ -356,4 +357,56 @@ bool XMLBuild::GetDocument(xml_document& returnDoc) {
 	success = result;
 	
 	return success;
+}
+
+bool XMLBuild::buildNodes(string path, xml_node &lastNode, xml_document &doc) {
+	
+	bool success = false;
+	
+	vector<string> nodeNames;
+	size_t current;
+	size_t next = -1;
+	do
+	{
+	  current = next + 1;
+	  next = path.find_first_of('/', current);
+	  nodeNames.push_back(path.substr(current, next - current));
+	}
+	while (next != string::npos);
+	
+	if (xmlString.size() < 1) { // if the string is blank then the XML document was inialised with no root node
+		xmlString = "<" + nodeNames[0] + "></" + nodeNames[0] + ">"; // add the first node to the string so the document has something to work with
+	}
+	
+	
+	if (GetDocument(doc)) {
+		//cout << "\ngot doc";
+		
+		if (nodeNames.size() > 0) {
+			//cout << "\nsplit node names";
+			
+			// loop through and append any nodes requires for the path
+			xml_node currentNode = doc;
+			for (int i = 0; i < nodeNames.size(); i++) {
+				//cout << "\ncurrent node name: " << currentNode.name();
+				xml_node nextNode = currentNode.child(nodeNames[i].c_str());
+				if (!nextNode) {
+					//cout << "\ncreating nextNode (" << nodeNames[i] << ")";
+					nextNode = currentNode.append_child(nodeNames[i].c_str());
+				}
+				currentNode = nextNode;
+			}
+			lastNode = currentNode;
+			success = true;
+		}
+	}
+	
+	return success;
+}
+
+void XMLBuild::saveDocument(xml_document& doc) {
+	std::stringstream ss;
+	doc.print(ss);
+	
+	xmlString = ss.str();
 }

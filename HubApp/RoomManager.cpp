@@ -28,12 +28,42 @@ void RoomManager::addNewRoom(XMLParse params) {
 	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
 		
 		// Need to generate ID, probably from webservice
-		Room room(name, name); // temp
+		XMLBuild body("SetNewRoom");
+		body.addAttribute("SetNewRoom", "xmlns", "http://tempuri.org/");
+		body.addStringNode("SetNewRoom/room/b:PropertyID", Global::propertyID);
+		body.addAttribute("SetNewRoom/room", "xmlns:b", "http://schemas.datacontract.org/2004/07/SmartSocketsWebService");
+		body.addAttribute("SetNewRoom/room", "xmlns:i", "http://www.w3.org/2001/XMLSchema-instance");
 		
-		int idx = getRoomIndex(name);
-		if (idx < 0) {
-			allRooms.push_back(room);
-			success = true;
+		HTTPRequest req;
+		string response;
+		req.SOAPRequest(body.getXML(), "SetNewRoom", response);
+		
+		XMLParse reply(response);
+		
+		string requestOutcome;
+		if (reply.getStringNode("//SetNewRoomResult", &requestOutcome)) {
+			if (requestOutcome.compare("true") == 0) {
+				
+				string id;
+				if (reply.getStringNode("//ID", &id)) {
+					
+					try {
+						std::stoi(id, NULL, 10); // just testing the ID to make sure it is an int
+						
+						Room room(id, name); // temp
+				
+						int idx = getRoomIndex(name);
+						if (idx < 0) {
+							allRooms.push_back(room);
+							success = true;
+						}
+					}
+					catch (exception& e) {
+						
+					}
+					
+				}
+			}
 		}
 	}
 	
@@ -69,6 +99,8 @@ void RoomManager::removeRoom(XMLParse params) {
 	
 	string id;
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
+		
+		// remove room from database
 		
 		int idx = getRoomIndex(id);
 		if (idx > -1) {

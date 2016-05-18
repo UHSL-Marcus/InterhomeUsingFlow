@@ -43,11 +43,12 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	bool success = false;
 	
 	stringstream xmlSS;
+	string messageID = Util::getUID(soapBody);
 	
 	xmlSS << 	"<s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:a=\"http://www.w3.org/2005/08/addressing\" xmlns:u=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">"
 					"<s:Header>"
 						"<a:Action s:mustUnderstand=\"1\">http://tempuri.org/ISmartSocketsWebService/" << action << "</a:Action>"
-						"<a:MessageID>" << Util::getUID(soapBody) << "</a:MessageID>"
+						"<a:MessageID>" << messageID << "</a:MessageID>"
 						"<a:ReplyTo>"
 							"<a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>"
 						"</a:ReplyTo>"
@@ -110,9 +111,25 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 				found = data.dataString.find("<s:Envelope");
 				if (found != string::npos) {
 					cout << "\nSOAP envelope found";
+					string envelope = data.dataString.substr(found, string::npos);
 					
-					out = data.dataString.substr(found, string::npos);
-					success = true;
+					XMLParse xml(envelope);
+					string responseMessageID;
+					try
+					{
+						xml.getStringNode("//*[local-name()='RelatesTo']", &responseMessageID);
+						
+						if (responseMessageID.compare(messageID) == 0) {
+						cout << "\nMessageID matches";
+						out = data.dataString.substr(found, string::npos);
+						success = true;
+					}
+					}
+					catch (const pugi::xpath_exception& e)
+					{
+						cout << "\nException: " << e.what();
+					}
+					
 				}
 			}
 			else 

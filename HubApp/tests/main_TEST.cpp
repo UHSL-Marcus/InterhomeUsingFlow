@@ -60,6 +60,11 @@ int main(void) {
 	roomManager.setCommandCallbacks();
 	uiDeviceManager.setCommandCallbacks();
 	
+	//set Globals
+	Global::webServiceUsr = "root";
+	Global::webServicePwd = "root";
+	Global::propertyID = "3";
+	
 	
 	
 	cout << "\nChoose Test:\n"
