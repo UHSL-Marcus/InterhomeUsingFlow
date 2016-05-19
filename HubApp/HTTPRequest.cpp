@@ -39,7 +39,7 @@ static size_t recievedDataCallback(void *contents, size_t size, size_t nmemb, vo
 }
 bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	
-	cout << "\nNew SOAPRequest";
+	//cout << "\nNew SOAPRequest";
 	bool success = false;
 	
 	stringstream xmlSS;
@@ -70,10 +70,10 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	const string &temp = xmlSS.str();
 	const char* xml = temp.c_str();
 	
-	cout << "\nRequest XML: \n" << temp;
+	//cout << "\nRequest XML: \n" << temp;
 	
 	if(curl) {
-		cout << "\nnew curl";
+		//cout << "\nnew curl";
 		curl_easy_reset(curl);
 		
 		curl_easy_setopt(curl, CURLOPT_URL, "https://147.197.205.57/ServiceImplimentation/Start.svc");
@@ -95,22 +95,22 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, recievedDataCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&data);
 		
-		cout << "\nSet curl options";
+		//cout << "\nSet curl options";
 		
 		CURLcode response = curl_easy_perform(curl);
 		
-		cout << "\nmade request";
+		//cout << "\nmade request";
 		
-		cout << "\ncurl response code: " << response;
+		//cout << "\ncurl response code: " << response;
 		
 		if(response == CURLE_OK) {
-			cout << "\nOK response";
+			//cout << "\nOK response";
 			size_t found = data.dataString.find("200 OK");
 			if (found != string::npos) {
-				cout << "\n200 Code";
+				//cout << "\n200 Code";
 				found = data.dataString.find("<s:Envelope");
 				if (found != string::npos) {
-					cout << "\nSOAP envelope found";
+					//cout << "\nSOAP envelope found";
 					string envelope = data.dataString.substr(found, string::npos);
 					
 					XMLParse xml(envelope);
@@ -120,7 +120,7 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 						xml.getStringNode("//*[local-name()='RelatesTo']", &responseMessageID);
 						
 						if (responseMessageID.compare(messageID) == 0) {
-						cout << "\nMessageID matches";
+						//cout << "\nMessageID matches";
 						out = data.dataString.substr(found, string::npos);
 						success = true;
 					}
@@ -134,7 +134,7 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 			}
 			else 
 			{
-				cout << "\nresponse:\n" << data.dataString;  
+				//cout << "\nresponse:\n" << data.dataString;  
 			}
 			
 		}

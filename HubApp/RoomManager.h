@@ -16,7 +16,7 @@
 
 using std::vector;
 using std::string;
-using std::exception
+using std::exception;
 
 class RoomManager : public ICommandCallback {
 	public:
@@ -68,6 +68,20 @@ class RoomManager : public ICommandCallback {
 			* @param params		XMLParse object holding the command infomation
 			*/
 		void removeRoom(XMLParse params);
+		
+		/** Static callback function for the command to update a room.
+			* This function only calls the correspoding member function.
+			*
+			* @param *parent	Pointer to the object that set this callback 
+			* @param params		XMLParse object holding the command infomation 	
+			*/
+		static void updateRoom(ICommandCallback *parent, XMLParse params);
+		
+		/** The member function for the command to update a room.
+			*
+			* @param params		XMLParse object holding the command infomation
+			*/
+		void updateRoom(XMLParse params);
 		
 	private:
 		vector<Room> allRooms;

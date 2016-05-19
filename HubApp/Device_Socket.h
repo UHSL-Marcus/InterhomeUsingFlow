@@ -7,6 +7,7 @@
 #define DEVICE_SOCKET_H
 
 #define DEVICE_TYPE "device_socket"
+#define DEVICE_TYPE_ID (1)
 
 #include "Device.h"
 

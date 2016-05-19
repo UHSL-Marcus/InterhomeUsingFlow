@@ -24,7 +24,7 @@ class Device {
 			*@param type 		The device type
 			*@param stateList 	Comma deliminated list of the non-general statefields required
 			*/
-		Device(string mac, string type, string stateList);
+		Device(string mac, string type, int typeID, string stateList);
 		
 		/** Set the ID of this device
 			*
@@ -80,11 +80,17 @@ class Device {
 			*/
 		bool removeFromRoom();
 		
-		/** Get the room of this device
+		/** Get the device type
 			*
-			*@return string 	The room ID
+			*@return string 	The device type
 			*/
 		string getType();
+		
+		/** Get the device type ID
+			*
+			*@return string 	The device type ID
+			*/
+		int getTypeID();
 		
 		/** Get a list of the names of the state fields of this device
 			*
@@ -149,6 +155,7 @@ class Device {
 		string deviceMAC;
 		string deviceName;
 		string deviceType;
+		int deviceTypeID;
 		bool getStateFieldIterator(string name, map<string,string>::iterator* out);
 		
 };

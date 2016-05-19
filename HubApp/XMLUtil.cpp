@@ -233,7 +233,7 @@ XMLBuild::XMLBuild() {
 }
 
 
-bool XMLBuild::addStringNode(string path, string text) {
+bool XMLBuild::addStringNode(string path, string text, bool unique) {
 	
 	//cout << "\n\nAdding string node. Path: " << path << ", text: " << text;
 	bool success = false;
@@ -252,6 +252,12 @@ bool XMLBuild::addStringNode(string path, string text) {
 	}
 	
 	return success;
+}
+
+bool XMLBuild::addIntNode(string path, int num, bool unique) {
+	stringstream ss;
+	ss << num;
+	return addStringNode(path, ss.str(), unique);
 }
 
 bool XMLBuild::addXML(string path, string xml) {
@@ -332,6 +338,7 @@ bool XMLBuild::removeNode(string path) {
 }
 
 string XMLBuild::getXML(bool raw) {
+	//cout << "\nXML: " << xmlString;
 	if (raw)
 		return xmlString;
 	else 
@@ -359,7 +366,7 @@ bool XMLBuild::GetDocument(xml_document& returnDoc) {
 	return success;
 }
 
-bool XMLBuild::buildNodes(string path, xml_node &lastNode, xml_document &doc) {
+bool XMLBuild::buildNodes(string path, xml_node &lastNode, xml_document &doc, bool unique) {
 	
 	bool success = false;
 	
@@ -385,12 +392,12 @@ bool XMLBuild::buildNodes(string path, xml_node &lastNode, xml_document &doc) {
 		if (nodeNames.size() > 0) {
 			//cout << "\nsplit node names";
 			
-			// loop through and append any nodes requires for the path
+			// loop through and append any nodes required for the path
 			xml_node currentNode = doc;
 			for (int i = 0; i < nodeNames.size(); i++) {
 				//cout << "\ncurrent node name: " << currentNode.name();
 				xml_node nextNode = currentNode.child(nodeNames[i].c_str());
-				if (!nextNode) {
+				if (!nextNode || (!unique && i == nodeNames.size() - 1)) {
 					//cout << "\ncreating nextNode (" << nodeNames[i] << ")";
 					nextNode = currentNode.append_child(nodeNames[i].c_str());
 				}
@@ -405,7 +412,7 @@ bool XMLBuild::buildNodes(string path, xml_node &lastNode, xml_document &doc) {
 }
 
 void XMLBuild::saveDocument(xml_document& doc) {
-	std::stringstream ss;
+	stringstream ss;
 	doc.print(ss);
 	
 	xmlString = ss.str();

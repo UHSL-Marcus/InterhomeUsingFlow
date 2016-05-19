@@ -9,12 +9,14 @@
 #include "../Room.h"
 #include "../RoomManager.h"
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 using std::cout;
 using std::string;
 using std::vector;
+using std::stringstream;
 
 void doRoomManager_test();
 

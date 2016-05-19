@@ -35,6 +35,9 @@
 #define M_DEVICE_TYPE "device_type"
 #define M_DEVICE_TYPE_PATH M_DATA_PATH "/" M_DEVICE_TYPE
 
+#define M_DEVICE_TYPE_ID "device_type_id"
+#define M_DEVICE_TYPE_ID_PATH M_DATA_PATH "/" M_DEVICE_TYPE_ID
+
 #define M_DEVICE_ID "device_id"
 #define M_DEVICE_ID_PATH M_DATA_PATH "/" M_DEVICE_ID
 

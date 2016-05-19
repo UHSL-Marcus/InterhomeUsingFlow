@@ -23,6 +23,12 @@ class Room {
 			*/
 		Room(string _roomID, string _roomName);
 		
+		/** Set the name of the room.
+			*
+			* @param name	The new name 
+			*/	
+		void setName(string name);
+		
 		/** Get the ID of the room.
 			*
 			* @return string	Room ID 

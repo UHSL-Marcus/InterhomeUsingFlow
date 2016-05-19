@@ -12,14 +12,19 @@ namespace DeviceManager_TEST {
 		vector<string> rooms = roomDeviceMapManager.getRooms();
 		
 		for (int i = 0; i < rooms.size(); i++) {
+			Room *room;
+			roomManager.getRoom(rooms[i], room);
 			
-			cout << rooms[i] << " => ";
+			cout << "(ID: " << room->getID() << ", Name: " << room->getName() << ") => ";
 			
 			vector<string> devices;
 			
 			if (roomDeviceMapManager.getRoomDevices(rooms[i], &devices)) {
 				for (int s = 0; s < devices.size(); s++) {
-					cout << devices[s] + "\n";
+					Device *device;
+					deviceManager.getDevice(devices[s], device);
+					
+					cout << "(ID: " << device->getID() << ", Name: " << device->getName() << ")\n";
 				}
 			}
 			
@@ -85,31 +90,10 @@ void doDeviceManager_test() {
 	XMLParse addRoom1("<packet><guid>0</guid><from>tester</from><to>hub</to><data><room_name>room1</room_name></data></packet>");
 	XMLParse addRoom2("<packet><guid>1</guid><from>tester</from><to>hub</to><data><room_name>room2</room_name></data></packet>");
 	
-	XMLParse addDevice1("<packet><guid>2</guid><to>hub</to><from>device1MAC</from><data><device_type>socket</device_type><primary_communication>flow</primary_communication><backup_communication>zigbee,6lowpan</backup_communication></data></packet>");
-	XMLParse addDevice2("<packet><guid>3</guid><to>hub</to><from>device2MAC</from><data><device_type>socket</device_type><primary_communication>zigbee</primary_communication><backup_communication>flow,6lowpan</backup_communication></data></packet>");
-
-	XMLParse pending1("<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device1MAC</mac_addr><room_id>room1</room_id><device_name>device1</device_name></data></packet>");
-	XMLParse pending2("<packet><guid>5</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>room2</room_id><device_name>device2</device_name></data></packet>");
+	XMLParse addDevice1("<packet><guid>2</guid><to>hub</to><from>device1MAC</from><data><device_type_id>1</device_type_id><primary_communication>flow</primary_communication><backup_communication>zigbee,6lowpan</backup_communication></data></packet>");
+	XMLParse addDevice2("<packet><guid>3</guid><to>hub</to><from>device2MAC</from><data><device_type_id>1</device_type_id><primary_communication>zigbee</primary_communication><backup_communication>flow,6lowpan</backup_communication></data></packet>");
 	
-	XMLParse heart("<packet><guid>6</guid><from>device1</from><to>hub</to><timestamp>a timestamp</timestamp><data></data></packet>");
 	
-	XMLParse deviceCmd("<packet><guid>7</guid><from>tester</from><to>hub</to><data><device_id>device1</device_id><device_cmd>TestCommand</device_cmd><device_cmd_data><test_1>testing</test_1><test_2>2</test_2></device_cmd_data></data></packet>");
-	
-	string stateChangeS = "<packet><guid>7</guid><from>device1</from><to>hub</to>"
-							"<data>"
-								"<state_pair>"
-									"<state_name>voltage_state</state_name>"
-									"<state_value>12v</state_value>"
-								"</state_pair>"
-								"<state_pair>"
-									"<state_name>power_state</state_name>"
-									"<state_value>60w</state_value>"
-								"</state_pair>"
-							"</data></packet>";
-	
-	XMLParse stateChange(stateChangeS);
-	
-	XMLParse remove("<packet><guid>8</guid><from>tester</from><to>hub</to><data><device_id>device1</device_id></data></packet>");
 	
 	cout << "\n******ADDING ROOMS**********\n";
 	
@@ -123,6 +107,19 @@ void doDeviceManager_test() {
 	commandHandler.handleCmd("NewDevicePresence", addDevice2);
 	printDevices();
 	
+	vector<Room> rooms = roomManager.getRooms();
+	stringstream ss;
+	
+	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device1MAC</mac_addr><room_id>" << rooms[0].getID() << "</room_id><device_name>device1</device_name></data></packet>";
+	XMLParse pending1(ss.str());
+	ss.str(string());
+	ss.clear();
+	
+	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>" << rooms[1].getID() << "</room_id><device_name>device1</device_name></data></packet>";
+	XMLParse pending2(ss.str());
+	ss.str(string());
+	ss.clear();
+	
 	
 	cout << "\n*********ACTIVATING PENDING DEVICES*************\n";
 	commandHandler.handleCmd("AddPendingDevice", pending1);
@@ -130,21 +127,53 @@ void doDeviceManager_test() {
 	printDevices();
 	printRooms();
 	
+	vector<Device> devices = deviceManager.getDevices();
+	ss << "<packet><guid>6</guid><from>" << devices[0].getID() << "</from><to>hub</to><timestamp>a timestamp</timestamp><data></data></packet>";
+	XMLParse heart(ss.str());
+	ss.str(string());
+	ss.clear();
 	
-	cout << "\n********SENDING HEARTBEAT (device1) *************\n";
+	ss << "<packet><guid>7</guid><from>tester</from><to>hub</to><data><device_id>" << devices[1].getID() << "</device_id><device_cmd>TestCommand</device_cmd><device_cmd_data><test_1>testing</test_1><test_2>2</test_2></device_cmd_data></data></packet>";
+	XMLParse deviceCmd(ss.str());
+	ss.str(string());
+	ss.clear();
+	
+	ss << "<packet><guid>7</guid><from>" << devices[1].getID() << "</from><to>hub</to>";
+	string stateChangeS = 	"<data>"
+								"<state_pair>"
+									"<state_name>voltage_state</state_name>"
+									"<state_value>12v</state_value>"
+								"</state_pair>"
+								"<state_pair>"
+									"<state_name>power_state</state_name>"
+									"<state_value>60w</state_value>"
+								"</state_pair>"
+							"</data></packet>";
+	
+	XMLParse stateChange(ss.str() + stateChangeS);
+	ss.str(string());
+	ss.clear();
+	
+	ss << "<packet><guid>8</guid><from>tester</from><to>hub</to><data><device_id>" << devices[0].getID() << "</device_id></data></packet>";
+	XMLParse remove(ss.str());
+	ss.str(string());
+	ss.clear();
+	
+	
+	cout << "\n********RECIEVING HEARTBEAT FROM deviceID: " << devices[0].getID() << "*************\n";
 	commandHandler.handleCmd("DeviceHeartbeat", heart);
 	printDevices();
 	
-	cout << "\n*******SENDING COMMAND TO device1 ****************\n";
+	cout << "\n*******SENDING COMMAND TO deviceID: " << devices[1].getID() << "****************\n";
 	commandHandler.handleCmd("DeviceCommand", deviceCmd);
 	//printDevices();
 	
-	cout << "\n********CHANGING device1 STATE********************";
+	cout << "\n********RECIEVING STATE CHANGE FROM deviceID: " << devices[1].getID() << "********************";
 	cout << "\nPower to '60w' and voltage to '12v'\n";
 	commandHandler.handleCmd("DeviceStateChanged", stateChange);
 	printDevices();
 	
-	cout << "\n***********REMOVING device1********************\n";
+	cout << "\n***********REMOVING deviceID: " << devices[0].getID() << "********************\n";
 	commandHandler.handleCmd("RemoveDevice", remove);
 	printDevices();
 	printRooms();

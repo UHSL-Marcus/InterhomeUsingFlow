@@ -21,6 +21,13 @@ cmd: RemoveRoom
 	<room_id>
 </data>
 
+----Update Room ----
+cmd: UpdateRoom
+<data>
+	<room_id>
+	<room_name>
+</data>
+
 ----New Device Presence ----
 cmd: NewDevicePresence
 <data>
@@ -89,7 +96,7 @@ cmd: DeviceSettingsUpdate
 -----New device presence----
 cmd: NewDevicePresence
 <data>
-	<device_type>
+	<device_type_id>
 	<device_mac>
 </data>
 

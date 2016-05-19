@@ -8,7 +8,7 @@
 /**** Public Functions ***/
 
 
-Device::Device(string mac, string type, string stateList) : deviceMAC(mac), deviceType(type) {
+Device::Device(string mac, string type, int typeID, string stateList) : deviceMAC(mac), deviceType(type), deviceTypeID(typeID) {
 	
 	string allStates = GENERAL_STATE_LIST + string(",") + stateList;
 	size_t current;
@@ -64,6 +64,10 @@ bool Device::removeFromRoom() { // put this is the destruction method?
 
 string Device::getType() {
 	return deviceType;
+}
+
+int Device::getTypeID() {
+	return deviceTypeID;
 }
 		
 vector<string> Device::getStateFieldNames(){

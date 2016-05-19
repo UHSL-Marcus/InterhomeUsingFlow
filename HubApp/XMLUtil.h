@@ -16,6 +16,7 @@
 using std::string;
 using std::vector;
 using std::pair;
+using std::stringstream;
 
 class XMLParse {
 	public:
@@ -88,9 +89,19 @@ class XMLBuild {
 			*
 			* @param path	Xpath to the node location
 			* @param text 	The text to store in the node
+			* @param unique	Flag showing if this should overwrite an existing node or create another one. 
 			* @return bool 	operation success
 			*/
-		bool addStringNode(string path, string text);
+		bool addStringNode(string path, string text, bool unique = true);
+		
+		/** Add a Int node to the XML document
+			*
+			* @param path	Xpath to the node location
+			* @param text 	The int to store in the node
+			* @param unique	Flag showing if this should overwrite an existing node or create another one. 
+			* @return bool 	operation success
+			*/
+		bool addIntNode(string path, int num, bool unique = true);
 		
 		/** Add XML to the XML document
 			*
@@ -125,7 +136,7 @@ class XMLBuild {
 	private: 
 		string xmlString;
 		bool GetDocument(pugi::xml_document& returnDoc);
-		bool buildNodes(string path, pugi::xml_node &lastNode, pugi::xml_document &doc);
+		bool buildNodes(string path, pugi::xml_node &lastNode, pugi::xml_document &doc, bool unique = true);
 		void saveDocument(pugi::xml_document& doc);
 };
 

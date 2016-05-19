@@ -52,28 +52,69 @@ void DeviceManager::addPendingDevice(XMLParse params) {
 		
 		if (idx > -1 && getDeviceIndexMAC(mac) == -1) {
 			
-			// generate GUID for device and add it to it along with any extra info the user sent
 			string roomID;
 			string name; 
 			if (params.getStringNode(M_ROOM_ID_PATH, &roomID) && params.getStringNode(M_DEVICE_NAME_PATH, &name)) {
-
+				
 				Device device = pendingDevices[idx];
-				string id = name;
-				device.setID(id); // generate GUID for device and add it to it along with any extra info the user sent
-				device.setRoom(roomID);
-				device.setName(name);
+				
+				// Add new device to the database and get the ID back
+				XMLBuild body("SetNewDevice");
+				body.addAttribute("SetNewDevice", "xmlns", "http://tempuri.org/");
+				body.addAttribute("SetNewDevice/device", "xmlns:b", "http://schemas.datacontract.org/2004/07/SmartSocketsWebService");
+				body.addAttribute("SetNewDevice/device", "xmlns:i", "http://www.w3.org/2001/XMLSchema-instance");
+				body.addAttribute("SetNewDevice/device/b:Commands", "xmlns:c", "http://schemas.microsoft.com/2003/10/Serialization/Arrays");
+
+				body.addStringNode("SetNewDevice/device/b:DeviceName", name);
+				body.addIntNode("SetNewDevice/device/b:DeviceTypeID", device.getTypeID());
+				body.addStringNode("SetNewDevice/device/b:RoomID", roomID);
+				body.addStringNode("SetNewDevice/device/b:Commands/c:string", "temp", false);
+				body.addStringNode("SetNewDevice/device/b:Commands/c:string", "temp2", false);
 				
 				
-				allDevices.push_back(device);
-				pendingDevices.erase(pendingDevices.begin()+idx);
+				HTTPRequest req;
+				string response;
+				req.SOAPRequest(body.getXML(), "SetNewDevice", response);
 				
-				// send update to newly addes device, informing it of it's new ID
-				XMLBuild messageXML;
-				messageXML.addStringNode(M_DEVICE_ID, id);
+				XMLParse reply(response);
 				
-				outgoingCommandHandler.sendCommand("me", id, "DeviceSettingsUpdate", messageXML.getXML(), device.getCommunicationProtocols());
+				string requestOutcome;
+				if (reply.getStringNode("//SetNewDeviceResult", &requestOutcome)) {
+					if (requestOutcome.compare("true") == 0) {
+						
+						string id;
+						if (reply.getStringNode("//ID", &id)) {
+							
+							try {
+								std::stoi(id, NULL, 10); // just testing the ID to make sure it is an int
+								
+								
+								device.setID(id);
+								device.setRoom(roomID);
+								device.setName(name);
+								
+								
+								allDevices.push_back(device);
+								pendingDevices.erase(pendingDevices.begin()+idx);
+								
+								// send update to newly addes device, informing it of it's new ID
+								XMLBuild messageXML;
+								messageXML.addStringNode(M_DEVICE_ID, id);
+								
+								outgoingCommandHandler.sendCommand("me", mac, "DeviceSettingsUpdate", messageXML.getXML(), device.getCommunicationProtocols());
+								
+								success = true;
+								
+							}
+							catch (exception& e) {
+								
+							}
+							
+						}
+					}
+				}
+
 				
-				success = true;
 			}
 			
 			
@@ -104,36 +145,49 @@ void DeviceManager::newDevicePresence(XMLParse params) {
 			
 			if (idx < 0) { // and not already pending
 
-				string type;
+				string typeID;
 				string primary;
 				string backup;
-				if (params.getStringNode(M_DEVICE_TYPE_PATH, &type) && params.getStringNode(M_PRIMARY_COMMS_PATH, &primary) && params.getStringNode(M_BACKUP_COMMS_PATH, &backup)) {
+				if (params.getStringNode(M_DEVICE_TYPE_ID_PATH, &typeID) && params.getStringNode(M_PRIMARY_COMMS_PATH, &primary) && params.getStringNode(M_BACKUP_COMMS_PATH, &backup)) {
 					
-					Device_Socket device(mac); // the device type will determine which device is created
-
-					vector<string> comms;
-					comms.push_back(primary);
-
-					size_t current;
-					size_t next = -1;
-					do
+					try 
 					{
-					  current = next + 1;
-					  next = backup.find_first_of(',', current);
-					  comms.push_back(backup.substr(current, next - current));
-					}
-					while (next != string::npos);
-					device.setCommunicationProtocols(comms);
+						Device *device;
+						switch (std::stoi(typeID, NULL, 10)) // the device types will be hard-coded, when new types are added, software will be updated to support them.
+						{
+							case 1: device = new Device_Socket(mac);
+						}
+						 // the device type will determine which device is created
 
-					
-					pendingDevices.push_back(device); //the device code would use its mac address until a GUID was assinged to it
-					
-					// send update to UI devices, prompting user to activate the pending device
-					XMLBuild messageXML;
-					messageXML.addStringNode(M_DEVICE_TYPE, type);
-					messageXML.addStringNode(M_DEVICE_MAC, mac);
-					
-					uiDeviceManager.uiDeviceCommand("NewDevicePresence", messageXML.getXML());
+						vector<string> comms;
+						comms.push_back(primary);
+
+						size_t current;
+						size_t next = -1;
+						do
+						{
+						  current = next + 1;
+						  next = backup.find_first_of(',', current);
+						  comms.push_back(backup.substr(current, next - current));
+						}
+						while (next != string::npos);
+						device->setCommunicationProtocols(comms);
+
+						
+						pendingDevices.push_back(*device); //the device code would use its mac address until a GUID was assinged to it
+						
+						delete device;
+						
+						// send update to UI devices, prompting user to activate the pending device
+						XMLBuild messageXML;
+						messageXML.addStringNode(M_DEVICE_TYPE_ID, typeID);
+						messageXML.addStringNode(M_DEVICE_MAC, mac);
+						
+						uiDeviceManager.uiDeviceCommand("NewDevicePresence", messageXML.getXML());
+					}
+					catch (exception& e) {
+						
+					}
 					
 				
 				}
@@ -255,14 +309,28 @@ void DeviceManager::removeDevice(XMLParse params) {
 		
 		int idx = getDeviceIndexID(id);
 		if (idx > -1) {
-			if (allDevices[idx].removeFromRoom()) {
-				allDevices.erase(allDevices.begin()+idx);
-				success = true;
-				// send new device configuration to UI
-			}
 			
+			XMLBuild body("RemoveDevice");
+			body.addAttribute("RemoveDevice", "xmlns", "http://tempuri.org/");
+			body.addStringNode("RemoveDevice/ID", id);
+			
+			HTTPRequest req;
+			string response;
+			req.SOAPRequest(body.getXML(), "RemoveDevice", response);
+			
+			XMLParse reply(response);
+			
+			string requestOutcome;
+			if (reply.getStringNode("//RemoveDeviceResult", &requestOutcome)) {
+				if (requestOutcome.compare("true") == 0) {
+					if (allDevices[idx].removeFromRoom()) {
+						allDevices.erase(allDevices.begin()+idx);
+						success = true;
+						// send new device configuration to UI
+					}
+				}
+			}
 		}
-
 	}
 	
 	// send success to UI device 

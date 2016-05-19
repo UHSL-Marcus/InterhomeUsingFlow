@@ -15,6 +15,7 @@ RoomManager::RoomManager() {
 void RoomManager::setCommandCallbacks() {
 	commandHandler.addCallback("AddNewRoom", RoomManager::addNewRoom, this);
 	commandHandler.addCallback("RemoveRoom", RoomManager::removeRoom, this);
+	commandHandler.addCallback("UpdateRoom", RoomManager::updateRoom, this);
 }
 
 void RoomManager::addNewRoom(ICommandCallback *parent, XMLParse params) {
@@ -27,10 +28,11 @@ void RoomManager::addNewRoom(XMLParse params) {
 	string name;
 	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
 		
-		// Need to generate ID, probably from webservice
+		// Add new room to the database and get the ID back
 		XMLBuild body("SetNewRoom");
 		body.addAttribute("SetNewRoom", "xmlns", "http://tempuri.org/");
 		body.addStringNode("SetNewRoom/room/b:PropertyID", Global::propertyID);
+		body.addStringNode("SetNewRoom/room/b:RoomName", name);
 		body.addAttribute("SetNewRoom/room", "xmlns:b", "http://schemas.datacontract.org/2004/07/SmartSocketsWebService");
 		body.addAttribute("SetNewRoom/room", "xmlns:i", "http://www.w3.org/2001/XMLSchema-instance");
 		
@@ -100,17 +102,80 @@ void RoomManager::removeRoom(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
-		// remove room from database
+		int idx = getRoomIndex(id);
+		if (idx > -1) {
+			// remove room from database
+			XMLBuild body("RemoveRoom");
+			body.addAttribute("RemoveRoom", "xmlns", "http://tempuri.org/");
+			body.addStringNode("RemoveRoom/ID", id);
+			
+			HTTPRequest req;
+			string response;
+			req.SOAPRequest(body.getXML(), "RemoveRoom", response);
+			
+			XMLParse reply(response);
+			
+			string requestOutcome;
+			if (reply.getStringNode("//RemoveRoomResult", &requestOutcome)) {
+				if (requestOutcome.compare("true") == 0) {
+					allRooms.erase(allRooms.begin()+idx);
+					success = true;
+					// send new room configuration to UI or upon recieveing the bool it can request it?
+				}
+			}
+			
+		}
+	}
+	
+	// send success to UI device 
+	string uiID;
+	string guid;
+	if (params.getStringNode(M_SENDER_PATH, &uiID) && params.getStringNode(M_GUID_PATH, &guid)) 	
+		uiDeviceManager.uiDeviceBool(uiID, success, guid);
+}
+
+void RoomManager::updateRoom(ICommandCallback *parent, XMLParse params) {
+	(static_cast<RoomManager*>(parent))->updateRoom(params);
+}
+void RoomManager::updateRoom(XMLParse params) {
+	bool success = false;
+	
+	string id;
+	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
 		int idx = getRoomIndex(id);
 		if (idx > -1) {
-			allRooms.erase(allRooms.begin()+idx);
-			success = true;
-			// send new room configuration to UI or upon recieveing the bool it can request it?
+			
+			string name;
+			if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
+				if (name.size() > 0) {
+					
+					// update room in database
+					XMLBuild body("UpdateRoom");
+					body.addAttribute("UpdateRoom", "xmlns", "http://tempuri.org/");
+					body.addStringNode("UpdateRoom/room/b:RoomID", id);
+					body.addStringNode("UpdateRoom/room/b:RoomName", name);
+					body.addAttribute("UpdateRoom/room", "xmlns:b", "http://schemas.datacontract.org/2004/07/SmartSocketsWebService");
+					body.addAttribute("UpdateRoom/room", "xmlns:i", "http://www.w3.org/2001/XMLSchema-instance");
+					
+					HTTPRequest req;
+					string response;
+					req.SOAPRequest(body.getXML(), "UpdateRoom", response);
+					
+					XMLParse reply(response);
+					
+					string requestOutcome;
+					if (reply.getStringNode("//UpdateRoomResult", &requestOutcome)) {
+						if (requestOutcome.compare("true") == 0) {
+							allRooms[idx].setName(name);
+							success = true;
+							// send new room info to UI or upon recieveing the bool it can request it?
+						}
+					}
+				}
+			}
+			
 		}
-		
-		
-	
 	}
 	
 	// send success to UI device 
