@@ -13,6 +13,11 @@ using std::string;
 
 class UIDevice {
 	public:
+		/** Empty Constructor. This is only for creating a object to hold the result of getUIDevice() in UIDeviceManager
+			*
+			*/
+		UIDevice() {};
+		
 		/** Constructor.
 			*
 			*@param id 			Device ID

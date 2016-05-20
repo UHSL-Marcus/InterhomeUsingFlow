@@ -12,19 +12,19 @@ namespace DeviceManager_TEST {
 		vector<string> rooms = roomDeviceMapManager.getRooms();
 		
 		for (int i = 0; i < rooms.size(); i++) {
-			Room *room;
-			roomManager.getRoom(rooms[i], room);
+			Room room;
+			roomManager.getRoom(rooms[i], &room);
 			
-			cout << "(ID: " << room->getID() << ", Name: " << room->getName() << ") => ";
+			cout << "(ID: " << room.getID() << ", Name: " << room.getName() << ") => ";
 			
 			vector<string> devices;
 			
 			if (roomDeviceMapManager.getRoomDevices(rooms[i], &devices)) {
 				for (int s = 0; s < devices.size(); s++) {
-					Device *device;
-					deviceManager.getDevice(devices[s], device);
+					Device device;
+					deviceManager.getDevice(devices[s], &device);
 					
-					cout << "(ID: " << device->getID() << ", Name: " << device->getName() << ")\n";
+					cout << "(ID: " << device.getID() << ", Name: " << device.getName() << ")\n";
 				}
 			}
 			
@@ -115,7 +115,7 @@ void doDeviceManager_test() {
 	ss.str(string());
 	ss.clear();
 	
-	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>" << rooms[1].getID() << "</room_id><device_name>device1</device_name></data></packet>";
+	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>" << rooms[1].getID() << "</room_id><device_name>device2</device_name></data></packet>";
 	XMLParse pending2(ss.str());
 	ss.str(string());
 	ss.clear();

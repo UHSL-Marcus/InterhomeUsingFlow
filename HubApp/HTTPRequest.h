@@ -26,7 +26,7 @@ struct RecievedData {
 
 class HTTPRequest {
 	public:
-		/** Constructor. This class should not be inialised directly, only ever via a child
+		/** Constructor.
 			*
 			*/
 		HTTPRequest();

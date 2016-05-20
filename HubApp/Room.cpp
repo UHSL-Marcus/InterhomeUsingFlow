@@ -11,6 +11,10 @@ Room::Room(string _roomID, string _roomName) : roomID(_roomID), roomName(_roomNa
 	roomDeviceMapManager.addRoom(roomID);
 }
 
+Room::Room(const Room &obj) : roomID(obj.roomID), roomName(obj.roomName) {
+	
+}
+
 void Room::setName(string name) {
 	roomName = name;
 }

@@ -18,6 +18,10 @@ using std::map;
 
 class Device {
 	public:
+		/** Empty Constructor. This is only for creating a object to hold the result of getDevice() in DeviceManager
+			*
+			*/
+		Device() {};
 		/** Constructor. This class should not be inialised directly, only ever via a child
 			*
 			*@param id 			Device MAC Address

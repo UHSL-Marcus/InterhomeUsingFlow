@@ -16,12 +16,21 @@ using std::string;
 
 class Room {
 	public:
+		/** Empty Constructor. This is only for creating a object to hold the result of getRoom() in RoomManager
+			*
+			*/
+		Room() {};
 		/** Room Constructor.
 			*
 			* @param _roomID 	ID of the room
 			* @param _roomName	Name of the room
 			*/
 		Room(string _roomID, string _roomName);
+		
+		/** Room Copy Constructor.
+			*
+			*/
+		Room(const Room &obj);
 		
 		/** Set the name of the room.
 			*
