@@ -76,7 +76,8 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 		//cout << "\nnew curl";
 		curl_easy_reset(curl);
 		
-		curl_easy_setopt(curl, CURLOPT_URL, "https://147.197.205.57/ServiceImplimentation/Start.svc");
+		curl_easy_setopt(curl, CURLOPT_URL, "https://mmtsnap.mmt.herts.ac.uk/sssvc/ServiceImplimentation/Start.svc");
+		//curl_easy_setopt(curl, CURLOPT_URL, "https://147.197.205.57/ServiceImplimentation/Start.svc");
 		curl_easy_setopt(curl, CURLOPT_POST, 1L);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, xml);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); //
