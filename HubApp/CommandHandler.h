@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <thread>
 
 #include "XMLUtil.h"
 
@@ -13,6 +14,7 @@
 
 using std::vector;
 using std::string;
+using std::thread;
 
 /** Interface to be implimented by classes that use the CommandHandler
     */
