@@ -6,5 +6,8 @@
 #define MAIN_H
 
 #include "CommandHandler.h"
+#include "DeviceManager.h"
+#include "RoomManager.h"
+#include "UIDeviceManager.h"
 
 #endif /* MAIN_H */

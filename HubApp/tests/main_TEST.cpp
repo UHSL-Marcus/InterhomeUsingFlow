@@ -48,6 +48,15 @@ void runTest(int i) {
 			cout << "\n\n----HTTP Request Test----\n\n";
 			doHTTPRequest_test();
 			break;
+		case 8:
+			cout << "\n\n----Thread Manager Test----\n\n";
+			doThreadManager_test();
+			break;
+		case 9:
+			for (int t = 0; t < 9; t++) {
+				runTest(t);
+			}
+			break;
 	}
 		
 	doCleanup();
@@ -76,22 +85,19 @@ int main(void) {
 			"5: Command Handler Test\n"
 			"6: XML Builder Test\n"
 			"7: HTTP Request Test\n"
-			"8: Run All";
-	int i;
+			"8: Thread Manager Test\n"
+			"9: Run All\n";
+			"Enter Number (0-9, Q to quit):";
+	char c;
 	
-	while (i != 9) {
-		i = -1;
-		cout << "\nEnter Number (0-8, 9 to quit):";
-		cin >> i;
+	while (c != 'Q') {
+		c = NULL;
+		cin >> c;
 		
-		if (i > -1 && i < 8) 
-			runTest(i);
-		else if (i == 8) {
-			for (int t = 0; t < 8; t++) {
-				runTest(t);
-			}
-		} else if (i != 9) cout << "Out of bounds\n";
-		
+		int i = c - '0';
+		if (i < 10) {
+		runTest(i);
+		} else cout << "Out of bounds\n";
 	}
 
 	
