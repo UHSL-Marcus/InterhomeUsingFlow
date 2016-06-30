@@ -4,49 +4,48 @@
 
 #include "ThreadManager.h"
 
+#include <iostream>
+#include <string>
+
+/**** Public Functions ***/
+
 ThreadManager::ThreadManager() {
 	
 }
+
 ThreadManager::~ThreadManager() {
 	
 }
 
-void ThreadManager::startNewThread(Function&& f, Args&&... args) {
-	
-	ThreadEntry<void> te;
-	packaged_task<void(args...)> task(f);
-	
-	te._future = task.get_future();
-	te._thread = thread(std::move(task), args...);
-	
-	removeCompletedThreads();
-	
-	threads.push_back(te);
-}
-
 void ThreadManager::removeCompletedThreads() {
+	vector<future<void>>& threads = _threads.getVector<future<void>>();
 	
 	for (int i = 0; i < threads.size(); i++) {
-		ThreadEntry te = threads[i];
-		
-        if (te._future.wait_for(std::chrono::milliseconds(0)) == future_status::ready) {
-			te._thread.join();
+        if (threads[i].wait_for(std::chrono::milliseconds(0)) == future_status::ready) {
 			threads.erase(threads.begin() + i);
+			std::cout << "\n\n***Thread at idx " + std::to_string(i) + " removed";
 		}
     }
 }
 
 void ThreadManager::joinAllThreads() {
+	vector<future<void>>& threads = _threads.getVector<future<void>>();
+	
 	for (int i = 0; i < threads.size(); i++) {
-		ThreadEntry te = threads[i];
-		te._thread.join();
+		threads[i].wait();
 		threads.erase(threads.begin() + i);
+		std::cout << "\n\n***Thread at idx " + std::to_string(i) + " removed";
 	}
+	
+	if (threads.size() > 0)
+		joinAllThreads();
 }
 
 int ThreadManager::getRunningThreadCount() {
 	removeCompletedThreads();
-	return threads.size();
+	return _threads.getVector<future<void>>().size();
 }
 
 ThreadManager threadManager;
+
+/**** Private Functions ***/

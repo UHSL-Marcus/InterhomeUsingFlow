@@ -23,7 +23,6 @@ HTTPRequest::~HTTPRequest() {
 }
 
 
-
 static size_t recievedDataCallback(void *contents, size_t size, size_t nmemb, void *userdata)
 {
 	size_t realsize = size * nmemb;

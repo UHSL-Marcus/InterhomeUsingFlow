@@ -14,7 +14,8 @@
 #include "CommandHandler_TEST.h"
 #include "XML_TEST.h"
 #include "HTTPRequest_TEST.h"
-#include "ThreadManager_TEST.h"
+#include "ThreadManager_Test.h"
+#include "DynamicVector_TEST.h"
 
 
 #endif /* TESTS_H */
