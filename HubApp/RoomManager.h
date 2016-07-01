@@ -33,7 +33,7 @@ class RoomManager : public ICommandCallback {
 			*/
 		vector<Room> getRooms();
 		
-		/** Get a COPY of a single room. Modifing this room will not effected the room store.
+		/** Get a COPY of a single room. Modifing this room will not effect the room store.
 			*
 			* @param id 	Room ID
 			* @param *out	pinter to a room object, to hold the copy 	

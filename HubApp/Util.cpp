@@ -18,6 +18,7 @@ string Util::getUID(string extra) {
 string Util::getUTC(string format, int modifySeconds) {
 	time_t t = time(0);
 	struct tm now = *gmtime(&t); // UTC time, this is a must
+	now.tm_sec += 10*60; // the server is 10 mins fast
 	now.tm_sec += modifySeconds;
 	timegm(&now);
 	char timestampBuff[80];

@@ -4,6 +4,8 @@
 
 #include "HTTPRequest.h"
 
+#include <iostream>
+
 
 void HTTPRequest::globalSetup() {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -38,7 +40,7 @@ static size_t recievedDataCallback(void *contents, size_t size, size_t nmemb, vo
 }
 bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	
-	//cout << "\nNew SOAPRequest";
+	//std::cout   << "\nNew SOAPRequest";
 	bool success = false;
 	
 	stringstream xmlSS;
@@ -51,7 +53,7 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 						"<a:ReplyTo>"
 							"<a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address>"
 						"</a:ReplyTo>"
-						"<a:To s:mustUnderstand=\"1\">https://ent-ml15aaf-1.herts.ac.uk/ServiceImplimentation/Start.svc</a:To>"
+						"<a:To s:mustUnderstand=\"1\">https://mmtsnap.mmt.herts.ac.uk/sssvc/ServiceImplimentation/Start.svc</a:To>"
 						"<o:Security s:mustUnderstand=\"1\" xmlns:o=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">"
 							"<u:Timestamp u:Id=\"_0\">"
 								"<u:Created>" << Util::getUTC("%Y-%m-%dT%X.000Z") << "</u:Created>"
@@ -69,10 +71,10 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	const string &temp = xmlSS.str();
 	const char* xml = temp.c_str();
 	
-	//cout << "\nRequest XML: \n" << temp;
+	//std::cout   << "\nRequest XML: \n" << temp;
 	
 	if(curl) {
-		//cout << "\nnew curl";
+		//std::cout   << "\nnew curl";
 		curl_easy_reset(curl);
 		
 		curl_easy_setopt(curl, CURLOPT_URL, "https://mmtsnap.mmt.herts.ac.uk/sssvc/ServiceImplimentation/Start.svc");
@@ -95,22 +97,22 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, recievedDataCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&data);
 		
-		//cout << "\nSet curl options";
+		//std::cout   << "\nSet curl options";
 		
 		CURLcode response = curl_easy_perform(curl);
 		
-		//cout << "\nmade request";
+		//std::cout   << "\nmade request";
 		
-		//cout << "\ncurl response code: " << response;
+		//std::cout   << "\ncurl response code: " << response;
 		
 		if(response == CURLE_OK) {
-			//cout << "\nOK response";
+			//std::cout   << "\nOK response";
 			size_t found = data.dataString.find("200 OK");
 			if (found != string::npos) {
-				//cout << "\n200 Code";
+				//std::cout   << "\n200 Code";
 				found = data.dataString.find("<s:Envelope");
 				if (found != string::npos) {
-					//cout << "\nSOAP envelope found";
+					//std::cout   << "\nSOAP envelope found";
 					string envelope = data.dataString.substr(found, string::npos);
 					
 					XMLParse xml(envelope);
@@ -120,21 +122,23 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 						xml.getStringNode("//*[local-name()='RelatesTo']", &responseMessageID);
 						
 						if (responseMessageID.compare(messageID) == 0) {
-						//cout << "\nMessageID matches";
-						out = data.dataString.substr(found, string::npos);
-						success = true;
-					}
+							//std::cout   << "\nMessageID matches";
+							out = data.dataString.substr(found, string::npos);
+							success = true;
+							
+							//std::cout  << "\nresponse:\n" << out;  
+						}
 					}
 					catch (const pugi::xpath_exception& e)
 					{
-						cout << "\nException: " << e.what();
+						//std::cout  << "\nException: " << e.what();
 					}
 					
 				}
 			}
 			else 
 			{
-				//cout << "\nresponse:\n" << data.dataString;  
+				//std::cout   << "\nresponse:\n" << data.dataString;  
 			}
 			
 		}

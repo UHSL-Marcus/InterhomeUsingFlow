@@ -93,7 +93,7 @@ int main(void) {
 	//set Globals
 	Global::webServiceUsr = "root";
 	Global::webServicePwd = "root";
-	Global::propertyID = "3";
+	Global::propertyID = "1";
 	
 	cout << info;
 			

@@ -22,9 +22,11 @@ void doHTTPRequest_test() {
 	cout << "\nBody: <GetAllDevices xmlns=\"http://tempuri.org/\"/>";
 	
 	string response;
-	req.SOAPRequest("<GetAllDevices xmlns=\"http://tempuri.org/\"/>", "GetAllDevices", response);
-	
-	cout << "\nResponse: \n" << response;
+	if (req.SOAPRequest("<GetAllDevices xmlns=\"http://tempuri.org/\"/>", "GetAllDevices", response)) {
+		cout << "\nResponse: \n" << response;
+	}
+	else 
+		cout << "\nRequest Failed";
 	
 	
 	

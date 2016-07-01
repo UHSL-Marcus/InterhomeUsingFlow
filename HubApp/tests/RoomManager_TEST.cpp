@@ -42,30 +42,36 @@ void doRoomManager_test() {
 	vector<Room> rooms = roomManager.getRooms();
 	stringstream ss;
 	
-	ss << "<packet><guid>2</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[0].getID() << "</room_id><room_name>newRoom1</room_name></data></packet>";
-	XMLParse update1(ss.str());
-	ss.str(string());
-	ss.clear();
+	if (rooms.size() >=2) {
 	
-	ss << "<packet><guid>2</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[1].getID() << "</room_id><room_name></room_name></data></packet>";
-	XMLParse update2(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	cout << "\n******UPDATING ROOMS**********\n";
-	cout << "\nupdate 'room1' to 'newRoom1'";
-	commandHandler.handleCmd("UpdateRoom", update1);
-	cout << "\nSend blank update to 'room2' (no change should occur)";
-	commandHandler.handleCmd("UpdateRoom", update2);
-	printRooms();
-	
-	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[1].getID() << "</room_id></data></packet>";
-	XMLParse remove(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	cout << "\n******REMOVING room2**********\n";
-	commandHandler.handleCmd("RemoveRoom", remove);
-	printRooms();
+		ss << "<packet><guid>2</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[0].getID() << "</room_id><room_name>newRoom1</room_name></data></packet>";
+		XMLParse update1(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		ss << "<packet><guid>2</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[1].getID() << "</room_id><room_name></room_name></data></packet>";
+		XMLParse update2(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		cout << "\n******UPDATING ROOMS**********\n";
+		cout << "\nupdate 'room1' to 'newRoom1'";
+		commandHandler.handleCmd("UpdateRoom", update1);
+		cout << "\nSend blank update to 'room2' (no change should occur)";
+		commandHandler.handleCmd("UpdateRoom", update2);
+		printRooms();
+		
+		ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[1].getID() << "</room_id></data></packet>";
+		XMLParse remove(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		cout << "\n******REMOVING room2**********\n";
+		commandHandler.handleCmd("RemoveRoom", remove);
+		printRooms();
+	}
+	else {
+		cout << "\n******ROOMS FAILED TO ADD**********\n";
+	}
 	
 }

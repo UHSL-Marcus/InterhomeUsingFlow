@@ -22,7 +22,7 @@ void RoomManager::addNewRoom(ICommandCallback *parent, XMLParse params) {
 	(static_cast<RoomManager*>(parent))->addNewRoom(params);
 }
 void RoomManager::addNewRoom(XMLParse params) {
-
+	
 	bool success = false;
 	
 	string name;
