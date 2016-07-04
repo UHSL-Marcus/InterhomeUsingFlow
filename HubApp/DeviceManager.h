@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "Managers_Handlers.h"
 #include "Device_Socket.h"
@@ -14,6 +15,8 @@
 
 using std::vector;
 using std::string;
+using std::mutex;
+using std::unique_lock;
 
 class DeviceManager : public ICommandCallback {
 	public:
@@ -132,15 +135,54 @@ class DeviceManager : public ICommandCallback {
 		void deviceStateChange(XMLParse params);
 		
 	private:
+		mutex allDevicesMutex;
+		mutex pendingDevicesMutex;
+		
 		vector<Device> allDevices;
 		vector<Device> pendingDevices;
+		
+		template<typename... Mutexes>
+		int getDeviceIndexID(string id, unique_lock<mutex> *outLock, Mutexes& ...mutexes);
+		int getDeviceIndexID(string id, unique_lock<mutex> *outLock);
 		int getDeviceIndexID(string id);
+		
+		template<typename... Mutexes>
+		int getDeviceIndexMAC(string mac, unique_lock<mutex> *outLock, Mutexes& ...mutexes);
+		int getDeviceIndexMAC(string mac, unique_lock<mutex> *outLock);
 		int getDeviceIndexMAC(string mac);
+		
+		template<typename... Mutexes>
+		int getPendingDeviceIndex(string mac, unique_lock<mutex> *outLock, Mutexes& ...mutexes);
+		int getPendingDeviceIndex(string mac, unique_lock<mutex> *outLock);
 		int getPendingDeviceIndex(string mac);
 		
 		// timer to remove pending devices after a while
 };
 
 extern DeviceManager deviceManager;
+
+template<typename... Mutexes>
+int DeviceManager::getPendingDeviceIndex(string mac, unique_lock<mutex> *outLock, Mutexes& ...mutexes) {
+	unique_lock<mutex> guard(pendingDevicesMutex, std::defer_lock);
+	std::lock(guard, mutexes...);
+	
+	return getPendingDeviceIndex(mac, outLock);
+}
+
+template<typename... Mutexes>
+int DeviceManager::getDeviceIndexID(string id, unique_lock<mutex> *outLock, Mutexes& ...mutexes) {
+	unique_lock<mutex> guard(allDevicesMutex, std::defer_lock);
+	std::lock(guard, mutexes...);
+	
+	return getDeviceIndexID(id, outLock);
+}
+
+template<typename... Mutexes>
+int DeviceManager::getDeviceIndexMAC(string mac, unique_lock<mutex> *outLock, Mutexes& ...mutexes) {
+	unique_lock<mutex> guard(allDevicesMutex, std::defer_lock);
+	std::lock(guard, mutexes...);
+	
+	return getDeviceIndexMAC(mac, outLock);
+}
 
 #endif /* DEVICE_MANAGER_H */

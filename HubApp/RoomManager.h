@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <mutex>
 
 #include "Managers_Handlers.h"
 #include "Room.h"
@@ -17,6 +18,8 @@
 using std::vector;
 using std::string;
 using std::exception;
+using std::mutex;
+using std::unique_lock;
 
 class RoomManager : public ICommandCallback {
 	public:
@@ -84,14 +87,17 @@ class RoomManager : public ICommandCallback {
 		void updateRoom(XMLParse params);
 		
 	private:
+		mutex allRoomsMutex;
 		vector<Room> allRooms;
 		
 		/** Get the index of a room within the storage vector
 			*
-			* @param id		Room ID
-			* @return int 	The index of the room within the storage vector (-1 if not present)
+			* @param id			Room ID
+			* @param *outLock	Pointer to move the lock for further use (optional)
+			* @return int 		The index of the room within the storage vector (-1 if not present)
 			*/
 		int getRoomIndex(string id);
+		int getRoomIndex(string id, unique_lock<mutex> *outLock);
 };
 
 /** The refrence of RoomManager to be used.

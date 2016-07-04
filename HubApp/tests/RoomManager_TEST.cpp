@@ -37,6 +37,7 @@ void doRoomManager_test() {
 	
 	commandHandler.handleCmd("AddNewRoom", add1);
 	commandHandler.handleCmd("AddNewRoom", add2);
+	threadManager.joinAllThreads();
 	printRooms();
 	
 	vector<Room> rooms = roomManager.getRooms();
@@ -59,6 +60,7 @@ void doRoomManager_test() {
 		commandHandler.handleCmd("UpdateRoom", update1);
 		cout << "\nSend blank update to 'room2' (no change should occur)";
 		commandHandler.handleCmd("UpdateRoom", update2);
+		threadManager.joinAllThreads();
 		printRooms();
 		
 		ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><room_id>" << rooms[1].getID() << "</room_id></data></packet>";
@@ -68,6 +70,7 @@ void doRoomManager_test() {
 		
 		cout << "\n******REMOVING room2**********\n";
 		commandHandler.handleCmd("RemoveRoom", remove);
+		threadManager.joinAllThreads();
 		printRooms();
 	}
 	else {

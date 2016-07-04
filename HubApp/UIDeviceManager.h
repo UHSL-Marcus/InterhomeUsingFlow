@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "Managers_Handlers.h"
 #include "UIDevice.h"
@@ -14,6 +15,8 @@
 
 using std::vector;
 using std::string;
+using std::mutex;
+using std::unique_lock;
 
 class UIDeviceManager : public ICommandCallback {
 	public:
@@ -95,8 +98,10 @@ class UIDeviceManager : public ICommandCallback {
 		void uiDeviceCommand(string cmd, string data = "", string id = "", string guid = "");
 		
 	private:
+		mutex allUIDevicesMutex;
 		vector<UIDevice> allUIDevices;
 		int getUIDeviceIndex(string id);
+		int getUIDeviceIndex(string id, unique_lock<mutex> *outLock);
 };
 
 extern UIDeviceManager uiDeviceManager;

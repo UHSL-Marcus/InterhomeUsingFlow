@@ -42,7 +42,7 @@ bool CommandHandler::handleCmd(string cmd, XMLParse params) {
 	vector<CommandBinding> bindings = findBindings(cmd);
 	if (!bindings.empty()) {
 		for (int i = 0; i < bindings.size(); i++) {
-			bindings[i].callback(bindings[i].parent, params);
+			threadManager.startNewThread(bindings[i].callback, bindings[i].parent, params);
 		}
 		
 		success = true;

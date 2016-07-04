@@ -34,6 +34,8 @@ void doCommandHandler_test() {
 	cout << "\nhandling command";
 	commandHandler.handleCmd("cmd", add1);
 	
+	threadManager.joinAllThreads();
+	
 	
 
 	

@@ -9,6 +9,7 @@
 #include <thread>
 
 #include "XMLUtil.h"
+#include "ThreadManager.h"
 
 #define MAX_CALLBACKS 50
 
