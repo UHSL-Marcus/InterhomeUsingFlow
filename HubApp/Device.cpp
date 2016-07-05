@@ -37,9 +37,8 @@ void Device::setName(string name) {
 	deviceName = name;
 }
 
-void Device::setRoom(string room_id) {
-	std::cout << "**Add " << deviceID << " to room " << room_id;
-	roomDeviceMapManager.addDevice(room_id, deviceID);
+bool Device::setRoom(string room_id) {
+	return roomDeviceMapManager.addDevice(room_id, deviceID);
 }
 
 string Device::getID() {

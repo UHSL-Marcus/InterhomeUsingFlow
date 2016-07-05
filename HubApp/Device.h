@@ -51,8 +51,9 @@ class Device {
 		/** Set the room of this device
 			*
 			*@param room_id 	The new room ID
+			*@return bool 		operation success
 			*/
-		void setRoom(string room_id);
+		bool setRoom(string room_id);
 		
 		/** Get the ID of this device
 			*

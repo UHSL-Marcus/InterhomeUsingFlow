@@ -26,7 +26,7 @@ void UIDeviceManager::addUIDevice(XMLParse params) {
 	string name;
 	string id; 
 	if (params.getStringNode(M_UI_DEVICE_NAME_PATH, &name) && params.getStringNode(M_SENDER_PATH, &id)) {
-		unique_lock<MutexCheckable> guard(allUIDevicesMutex);
+		unique_lock<recursive_mutex> guard(allUIDevicesMutex);
 	
 		UIDevice uiDevice(id, name); 
 		
@@ -51,8 +51,8 @@ void UIDeviceManager::removeUIDevice(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_UI_DEVICE_ID_PATH, &id)) {
 
-		unique_lock<MutexCheckable> guard;
-		int idx = getUIDeviceIndex(id, &guard);
+		unique_lock<recursive_mutex> guard(allUIDevicesMutex);
+		int idx = getUIDeviceIndex(id);
 		if (idx > -1) {
 			allUIDevices.erase(allUIDevices.begin()+idx);
 
@@ -69,8 +69,8 @@ vector<UIDevice> UIDeviceManager::getUIDevices() {
 
 bool UIDeviceManager::getUIDevice(string id, UIDevice *out) {
 	
-	unique_lock<MutexCheckable> guard;
-	int idx = getUIDeviceIndex(id, &guard);
+	unique_lock<recursive_mutex> guard(allUIDevicesMutex);
+	int idx = getUIDeviceIndex(id);
 	if (idx > -1) {
 		*out = allUIDevices[idx];
 		return true;
@@ -81,8 +81,8 @@ bool UIDeviceManager::getUIDevice(string id, UIDevice *out) {
 
 void UIDeviceManager::uiDeviceBool(string id, bool result, string guid) {
 	
-	unique_lock<MutexCheckable> guard;
-	int idx = getUIDeviceIndex(id, &guard);
+	unique_lock<recursive_mutex> guard(allUIDevicesMutex);
+	int idx = getUIDeviceIndex(id);
 	
 	XMLBuild messageXML;
 	messageXML.addStringNode(M_UI_DEVICE_BOOL, (result ? string("1") : string("0")));
@@ -95,7 +95,7 @@ void UIDeviceManager::uiDeviceBool(string id, bool result, string guid) {
 void UIDeviceManager::uiDeviceMessage(string message, string id, string guid) {
 	vector<UIDevice> recipients;
 	
-	unique_lock<MutexCheckable> guard(allUIDevicesMutex);
+	unique_lock<recursive_mutex> guard(allUIDevicesMutex);
 	if (id == "")
 		recipients = allUIDevices; // can change to all online devices
 	else {
@@ -104,6 +104,8 @@ void UIDeviceManager::uiDeviceMessage(string message, string id, string guid) {
 			recipients.push_back(allUIDevices[idx]);
 		}
 	}
+	
+	guard.unlock();
 	
 	XMLBuild messageXML;
 	messageXML.addStringNode(M_UI_DEVICE_MESSAGE, message);
@@ -116,7 +118,7 @@ void UIDeviceManager::uiDeviceMessage(string message, string id, string guid) {
 void UIDeviceManager::uiDeviceCommand(string cmd, string data, string id, string guid) {
 	vector<UIDevice> recipients;
 	
-	unique_lock<MutexCheckable> guard(allUIDevicesMutex);
+	unique_lock<recursive_mutex> guard(allUIDevicesMutex);
 	if (id == "")
 		recipients = allUIDevices; // can change to all online devices
 	else {
@@ -126,6 +128,8 @@ void UIDeviceManager::uiDeviceCommand(string cmd, string data, string id, string
 		}
 	}
 	
+	guard.unlock();
+	
 	for (int i = 0; i < recipients.size(); i++) {
 		outgoingCommandHandler.sendCommand("me", recipients[i].getID(), cmd, data, recipients[i].getCommunicationProtocols(), guid);
 	}
@@ -134,14 +138,7 @@ void UIDeviceManager::uiDeviceCommand(string cmd, string data, string id, string
 /**** Private Functions ***/
 
 int UIDeviceManager::getUIDeviceIndex(string id) {
-	unique_lock<MutexCheckable> guard;
-	return getUIDeviceIndex(id, &guard);
-}
-int UIDeviceManager::getUIDeviceIndex(string id, unique_lock<MutexCheckable> *outLock) {
 	
-	if (!allUIDevicesMutex.is_locked())
-		*outLock = unique_lock<MutexCheckable>(allUIDevicesMutex);
-
 	int idx = -1;
 	for (int i = 0; i < allUIDevices.size(); i++) {
 		string deviceID = allUIDevices[i].getID();
@@ -152,5 +149,6 @@ int UIDeviceManager::getUIDeviceIndex(string id, unique_lock<MutexCheckable> *ou
 	
 	return idx;
 }
+
 
 UIDeviceManager uiDeviceManager;

@@ -20,19 +20,19 @@ void DeviceManager::setCommandCallbacks() {
 }
 
 vector<Device> DeviceManager::getDevices(){
-	unique_lock<MutexCheckable> guard(allDevicesMutex);
+	unique_lock<recursive_mutex> guard(allDevicesMutex);
 	return allDevices;
 }
 
 vector<Device> DeviceManager::getPendingDevices() {
-	unique_lock<MutexCheckable> guard(pendingDevicesMutex);
+	unique_lock<recursive_mutex> guard(pendingDevicesMutex);
 	return pendingDevices;
 }
 
 bool DeviceManager::getDevice(string id, Device *out) {
 	
-	unique_lock<MutexCheckable> guard;
-	int idx = getDeviceIndexID(id, &guard);
+	unique_lock<recursive_mutex> guard(allDevicesMutex);
+	int idx = getDeviceIndexID(id);
 	if (idx > -1) {
 		*out = allDevices[idx];
 		return true;
@@ -52,9 +52,11 @@ void DeviceManager::addPendingDevice(XMLParse params) {
 	string mac;
 	if (params.getStringNode(M_DEVICE_MAC_PATH, &mac)) {
 		
-		unique_lock<MutexCheckable> pendingGuard;
-		unique_lock<MutexCheckable> guard(allDevicesMutex, std::defer_lock);
-		int idx = getPendingDeviceIndex(mac, &pendingGuard, guard);
+		unique_lock<recursive_mutex> pendingGuard(pendingDevicesMutex, std::defer_lock);
+		unique_lock<recursive_mutex> guard(allDevicesMutex, std::defer_lock);
+		std:lock(guard, pendingGuard);
+		
+		int idx = getPendingDeviceIndex(mac);
 		
 		if (idx > -1 && getDeviceIndexMAC(mac) == -1) {
 			
@@ -145,14 +147,14 @@ void DeviceManager::newDevicePresence(XMLParse params) {
 	string mac; 
 	if (params.getStringNode(M_SENDER_PATH, &mac)) { // before being assigned an ID, a new device will use its mac address as its messaging ID.
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getDeviceIndexMAC(mac, &guard);
+		unique_lock<recursive_mutex> guard(allDevicesMutex);
+		int idx = getDeviceIndexMAC(mac);
 		
 		if (idx < 0) { // make sure this mac address isn't already registered
 			guard.unlock();
 			
-			unique_lock<MutexCheckable> pendingGuard;
-			idx = getPendingDeviceIndex(mac, &pendingGuard);
+			unique_lock<recursive_mutex> pendingGuard(pendingDevicesMutex);
+			idx = getPendingDeviceIndex(mac);
 			
 			if (idx < 0) { // and not already pending
 
@@ -217,8 +219,8 @@ void DeviceManager::deviceHeartbeat(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_SENDER_PATH, &id)) {
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getDeviceIndexID(id, &guard);
+		unique_lock<recursive_mutex> guard(allDevicesMutex);
+		int idx = getDeviceIndexID(id);
 		
 		if (idx > -1) {
 			
@@ -245,8 +247,8 @@ void DeviceManager::deviceCommand(XMLParse params) {
 	string cmd;
 	if (params.getStringNode(M_DEVICE_ID_PATH, &id) && params.getStringNode(M_DEVICE_CMD_PATH, &cmd)) {
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getDeviceIndexID(id, &guard);
+		unique_lock<recursive_mutex> guard(allDevicesMutex);
+		int idx = getDeviceIndexID(id);
 		
 		if (idx > -1) {
 			
@@ -284,8 +286,8 @@ void DeviceManager::deviceStateChange(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_SENDER_PATH, &id)) {
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getDeviceIndexID(id, &guard);
+		unique_lock<recursive_mutex> guard(allDevicesMutex);
+		int idx = getDeviceIndexID(id);
 		
 		
 		if (idx > -1) {
@@ -325,8 +327,8 @@ void DeviceManager::removeDevice(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_DEVICE_ID_PATH, &id)) {
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getDeviceIndexID(id, &guard);
+		unique_lock<recursive_mutex> guard(allDevicesMutex);
+		int idx = getDeviceIndexID(id);
 		if (idx > -1) {
 			
 			XMLBuild body("RemoveDevice");
@@ -363,65 +365,38 @@ void DeviceManager::removeDevice(XMLParse params) {
 /**** Private Functions ***/
 
 int DeviceManager::getPendingDeviceIndex(string mac) {
-	unique_lock<MutexCheckable> guard;
-	return getPendingDeviceIndex(mac, &guard);
-}
-int DeviceManager::getPendingDeviceIndex(string mac, unique_lock<MutexCheckable> *outLock) {
-	if (!pendingDevicesMutex.is_locked())
-		*outLock = unique_lock<MutexCheckable>(pendingDevicesMutex);
-	
 	int idx = -1;
 	for (int i = 0; i < pendingDevices.size(); i++) {
 		string deviceMAC = pendingDevices[i].getMAC();
-		if (mac == deviceMAC && mac.size() == deviceMAC.size()) {
+		if (mac == deviceMAC && mac.size() == deviceMAC.size())
 			idx = i;
-		}
 	}
 	
 	return idx;
 }
 
 int DeviceManager::getDeviceIndexID(string id) {
-	unique_lock<MutexCheckable> guard;
-	return getDeviceIndexID(id, &guard);	
-}
-int DeviceManager::getDeviceIndexID(string id, unique_lock<MutexCheckable> *outLock) {
-	
-	if (!allDevicesMutex.is_locked())
-		*outLock = unique_lock<MutexCheckable>(allDevicesMutex);
-	
 	int idx = -1;
 	for (int i = 0; i < allDevices.size(); i++) {
 		string deviceID = allDevices[i].getID();
-		if (id == deviceID && id.size() == deviceID.size()) {
+		if (id == deviceID && id.size() == deviceID.size()) 
 			idx = i;
-			
-		}
 	}
 
 	return idx;
 }
 
 int DeviceManager::getDeviceIndexMAC(string mac) {
-	unique_lock<MutexCheckable> guard;
-	return getDeviceIndexMAC(mac, &guard);	
-}
-int DeviceManager::getDeviceIndexMAC(string mac, unique_lock<MutexCheckable> *outLock) {
-	
-	if (!allDevicesMutex.is_locked())
-		*outLock = unique_lock<MutexCheckable>(allDevicesMutex);
-	
 	int idx = -1;
 	for (int i = 0; i < allDevices.size(); i++) {
 		string deviceMAC = allDevices[i].getMAC();
-		if (mac == deviceMAC && mac.size() == deviceMAC.size()) {
+		if (mac == deviceMAC && mac.size() == deviceMAC.size())
 			idx = i;
-			
-		}
 	}
 	
 	return idx;
 }
+
 
 
 DeviceManager deviceManager;

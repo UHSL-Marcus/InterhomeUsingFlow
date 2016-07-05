@@ -114,76 +114,78 @@ void doDeviceManager_test() {
 	vector<Room> rooms = roomManager.getRooms();
 	stringstream ss;
 	
-	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device1MAC</mac_addr><room_id>" << rooms[0].getID() << "</room_id><device_name>device1</device_name></data></packet>";
-	XMLParse pending1(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>" << rooms[1].getID() << "</room_id><device_name>device2</device_name></data></packet>";
-	XMLParse pending2(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	
-	cout << "\n*********ACTIVATING PENDING DEVICES*************\n";
-	commandHandler.handleCmd("AddPendingDevice", pending1);
-	commandHandler.handleCmd("AddPendingDevice", pending2);
-	threadManager.joinAllThreads();
-	printDevices();
-	printRooms();
-	
-	vector<Device> devices = deviceManager.getDevices();
-	ss << "<packet><guid>6</guid><from>" << devices[0].getID() << "</from><to>hub</to><timestamp>a timestamp</timestamp><data></data></packet>";
-	XMLParse heart(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	ss << "<packet><guid>7</guid><from>tester</from><to>hub</to><data><device_id>" << devices[1].getID() << "</device_id><device_cmd>TestCommand</device_cmd><device_cmd_data><test_1>testing</test_1><test_2>2</test_2></device_cmd_data></data></packet>";
-	XMLParse deviceCmd(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	ss << "<packet><guid>7</guid><from>" << devices[1].getID() << "</from><to>hub</to>";
-	string stateChangeS = 	"<data>"
-								"<state_pair>"
-									"<state_name>voltage_state</state_name>"
-									"<state_value>12v</state_value>"
-								"</state_pair>"
-								"<state_pair>"
-									"<state_name>power_state</state_name>"
-									"<state_value>60w</state_value>"
-								"</state_pair>"
-							"</data></packet>";
-	
-	XMLParse stateChange(ss.str() + stateChangeS);
-	ss.str(string());
-	ss.clear();
-	
-	ss << "<packet><guid>8</guid><from>tester</from><to>hub</to><data><device_id>" << devices[0].getID() << "</device_id></data></packet>";
-	XMLParse remove(ss.str());
-	ss.str(string());
-	ss.clear();
-	
-	
-	cout << "\n********RECIEVING HEARTBEAT FROM deviceID: " << devices[0].getID() << "*************\n";
-	commandHandler.handleCmd("DeviceHeartbeat", heart);
-	threadManager.joinAllThreads();
-	printDevices();
-	
-	cout << "\n*******SENDING COMMAND TO deviceID: " << devices[1].getID() << "****************\n";
-	commandHandler.handleCmd("DeviceCommand", deviceCmd);
-	//printDevices();
-	
-	cout << "\n********RECIEVING STATE CHANGE FROM deviceID: " << devices[1].getID() << "********************";
-	cout << "\nPower to '60w' and voltage to '12v'\n";
-	commandHandler.handleCmd("DeviceStateChanged", stateChange);
-	threadManager.joinAllThreads();
-	printDevices();
-	
-	cout << "\n***********REMOVING deviceID: " << devices[0].getID() << "********************\n";
-	commandHandler.handleCmd("RemoveDevice", remove);
-	threadManager.joinAllThreads();
-	printDevices();
-	printRooms();
+	if (rooms.size() >=2) {
+		ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device1MAC</mac_addr><room_id>" << rooms[0].getID() << "</room_id><device_name>device1</device_name></data></packet>";
+		XMLParse pending1(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		ss << "<packet><guid>4</guid><from>tester</from><to>hub</to><data><mac_addr>device2MAC</mac_addr><room_id>" << rooms[1].getID() << "</room_id><device_name>device2</device_name></data></packet>";
+		XMLParse pending2(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		
+		cout << "\n*********ACTIVATING PENDING DEVICES*************\n";
+		commandHandler.handleCmd("AddPendingDevice", pending1);
+		commandHandler.handleCmd("AddPendingDevice", pending2);
+		threadManager.joinAllThreads();
+		printDevices();
+		printRooms();
+		
+		vector<Device> devices = deviceManager.getDevices();
+		ss << "<packet><guid>6</guid><from>" << devices[0].getID() << "</from><to>hub</to><timestamp>a timestamp</timestamp><data></data></packet>";
+		XMLParse heart(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		ss << "<packet><guid>7</guid><from>tester</from><to>hub</to><data><device_id>" << devices[1].getID() << "</device_id><device_cmd>TestCommand</device_cmd><device_cmd_data><test_1>testing</test_1><test_2>2</test_2></device_cmd_data></data></packet>";
+		XMLParse deviceCmd(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		ss << "<packet><guid>7</guid><from>" << devices[1].getID() << "</from><to>hub</to>";
+		string stateChangeS = 	"<data>"
+									"<state_pair>"
+										"<state_name>voltage_state</state_name>"
+										"<state_value>12v</state_value>"
+									"</state_pair>"
+									"<state_pair>"
+										"<state_name>power_state</state_name>"
+										"<state_value>60w</state_value>"
+									"</state_pair>"
+								"</data></packet>";
+		
+		XMLParse stateChange(ss.str() + stateChangeS);
+		ss.str(string());
+		ss.clear();
+		
+		ss << "<packet><guid>8</guid><from>tester</from><to>hub</to><data><device_id>" << devices[0].getID() << "</device_id></data></packet>";
+		XMLParse remove(ss.str());
+		ss.str(string());
+		ss.clear();
+		
+		
+		cout << "\n********RECIEVING HEARTBEAT FROM deviceID: " << devices[0].getID() << "*************\n";
+		commandHandler.handleCmd("DeviceHeartbeat", heart);
+		threadManager.joinAllThreads();
+		printDevices();
+		
+		cout << "\n*******SENDING COMMAND TO deviceID: " << devices[1].getID() << "****************\n";
+		commandHandler.handleCmd("DeviceCommand", deviceCmd);
+		//printDevices();
+		
+		cout << "\n********RECIEVING STATE CHANGE FROM deviceID: " << devices[1].getID() << "********************";
+		cout << "\nPower to '60w' and voltage to '12v'\n";
+		commandHandler.handleCmd("DeviceStateChanged", stateChange);
+		threadManager.joinAllThreads();
+		printDevices();
+		
+		cout << "\n***********REMOVING deviceID: " << devices[0].getID() << "********************\n";
+		commandHandler.handleCmd("RemoveDevice", remove);
+		threadManager.joinAllThreads();
+		printDevices();
+		printRooms();
+	}
 	
 }

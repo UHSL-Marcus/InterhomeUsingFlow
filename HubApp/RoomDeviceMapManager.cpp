@@ -15,8 +15,8 @@ RoomDeviceMapManager::RoomDeviceMapManager() {
 bool RoomDeviceMapManager::addRoom(string id) {
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<MutexCheckable> guard;
-	if (!getRoomIterator(id, &itr, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (!getRoomIterator(id, &itr)) {
 		vector<string> toInsert;
 		roomDeviceMap.insert(std::pair<string,vector<string> >(id,toInsert));
 		return true;
@@ -28,8 +28,8 @@ bool RoomDeviceMapManager::removeRoom(string id) {
 	
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<MutexCheckable> guard;
-	if (getRoomIterator(id, &itr, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (getRoomIterator(id, &itr)) {
 		roomDeviceMap.erase(itr);
 		return true;
 	}
@@ -38,12 +38,10 @@ bool RoomDeviceMapManager::removeRoom(string id) {
 
 bool RoomDeviceMapManager::addDevice(string room_id, string device_id) {
 	
-	std::cout << "***Add device";
-	
 	map<string,vector<string> >::iterator itr;
 
-	unique_lock<MutexCheckable> guard;
-	if (getRoomIterator(room_id, &itr, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (getRoomIterator(room_id, &itr)) {
 		vector<string>& devices = itr->second;
 		bool exist = false;
 		for (int i = 0; i < devices.size(); i++) {
@@ -66,8 +64,8 @@ bool RoomDeviceMapManager::removeDevice(string device_id) {
 	int idx;
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<MutexCheckable> guard;
-	if (getDeviceIndexAndRoomIterator(device_id, &itr, &idx, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (getDeviceIndexAndRoomIterator(device_id, &itr, &idx)) {
 		vector<string>& devices = itr->second;
 		devices.erase(devices.begin()+idx);
 		return true;
@@ -80,8 +78,8 @@ bool RoomDeviceMapManager::getDeviceRoom(string id, string* out) {
 	
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<MutexCheckable> guard;
-	if (getDeviceIndexAndRoomIterator(id, &itr, NULL, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (getDeviceIndexAndRoomIterator(id, &itr, NULL)) {
 		*out = itr->first;
 		return true;
 	}
@@ -93,8 +91,8 @@ bool RoomDeviceMapManager::getRoomDevices(string id, vector<string>* out) {
 
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<MutexCheckable> guard;
-	if (getRoomIterator(id, &itr, &guard)) {
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
+	if (getRoomIterator(id, &itr)) {
 		*out = itr->second;
 		return true;
 	}
@@ -105,7 +103,7 @@ vector<string> RoomDeviceMapManager::getRooms() {
 	
 	vector<string> rooms;
 	
-	unique_lock<MutexCheckable> guard(roomDeviceMapMutex);
+	unique_lock<recursive_mutex> guard(roomDeviceMapMutex);
 	for (map<string,vector<string> >::iterator itr = roomDeviceMap.begin(); itr != roomDeviceMap.end(); ++itr) {
 		rooms.push_back(itr->first);
 	}
@@ -116,10 +114,7 @@ vector<string> RoomDeviceMapManager::getRooms() {
 
 /**** Private Functions ****/
 
-bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> >::iterator* out, unique_lock<MutexCheckable> *outLock) {
-
-	if (!roomDeviceMapMutex.is_locked()) 
-		*outLock = unique_lock<MutexCheckable>(roomDeviceMapMutex);
+bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> >::iterator* out) {
 	
 	map<string,vector<string> >::iterator itr = roomDeviceMap.find(id);
 	if (itr != roomDeviceMap.end()) {
@@ -127,15 +122,11 @@ bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> 
 		return true;
 	}
 	
-	
 	return false;
 }
 
-bool RoomDeviceMapManager::getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut, unique_lock<MutexCheckable> *outLock) {
+bool RoomDeviceMapManager::getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut) {
 
-	if (!roomDeviceMapMutex.is_locked()) 
-		*outLock = unique_lock<MutexCheckable>(roomDeviceMapMutex);
-	
 	for (map<string,vector<string> >::iterator itr = roomDeviceMap.begin(); itr != roomDeviceMap.end(); ++itr) {
 		vector<string> devices = itr->second;
 		for (int i = 0; i < devices.size(); i++) {

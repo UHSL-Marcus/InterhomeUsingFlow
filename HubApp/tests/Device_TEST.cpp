@@ -21,7 +21,7 @@ namespace Device_TEST{
 			
 			if (roomDeviceMapManager.getRoomDevices(rooms[i], &devices)) {
 				for (int s = 0; s < devices.size(); s++) {
-					cout << devices[s] + "\n";
+					cout << devices[s] + " ";
 				}
 			}
 			
@@ -51,53 +51,64 @@ void doDevice_test() {
 	roomManager.addNewRoom(add1);
 	threadManager.joinAllThreads();
 	
-	cout << "\n******ADDING ROOM**********\n";
-	printRooms();
+	if (roomDeviceMapManager.getRooms().size() > 0) {
 	
-	Device_Socket device("socket_device1MAC");
-	cout << "\n******CREATED DEVICE**********\n";
-	
-	cout << "\nDevice MAC is: " << device.getMAC();
-	cout << "\nDevice Type is: " << device.getType();
-	cout << "\nCommands are: ";
-	vector<string> cmds = device.getCommands();
-	for (int i = 0; i < cmds.size(); i++) {
-		cout << cmds[i] << " ";
-	}
-	printState(device);
-	
-	cout << "\n******UPDATING DEVICE**********\n";
-	device.setID("socket_deviceID");
-	
-	cout << "\n****Set ID to 'socket_deviceID', DeviceID: " << device.getID();
-	
-	device.setName("socket_device_name");
-	cout << "\n****Set name to 'socket_device_name', DeviceName: " << device.getName();
-	
-	device.setRoom("room1");
-	cout << "\n****Added device to room, DeviceRoom: " << device.getRoom();
-	printRooms();
-	
-	device.changeStateValue("connected_state", "on");
-	string val;
-	device.getStateValue("connected_state", &val);
-	cout << "\n****Changed 'connected_state' to 'on' (Device_Socket should preappend '(socket)' to the added value), 'connected_state' value: " << val;
-	printState(device);
-	
-	time_t t = time(0);
-	struct tm now = *localtime(&t);
-	char buf[80];
-	strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &now);
-	device.doHeartbeat(buf);
-	
-	val = "";
-	device.getStateValue("heartbeat_state", &val);
-	cout << "\n****Heartbeat set as current time. 'heartbeat_state' value : " << val;
-	printState(device);
-	
-	cout << "\n******REMOVING DEVICE FROM ROOM**********\n";
-	device.removeFromRoom();
-	printRooms();
+		cout << "\n******ADDING ROOM**********\n";
+		printRooms();
+		string roomID = roomDeviceMapManager.getRooms()[0];
+		
+		Device_Socket device("socket_device1MAC");
+		cout << "\n******CREATED DEVICE**********\n";
+		
+		cout << "\nDevice MAC is: " << device.getMAC();
+		cout << "\nDevice Type is: " << device.getType();
+		cout << "\nCommands are: ";
+		vector<string> cmds = device.getCommands();
+		for (int i = 0; i < cmds.size(); i++) {
+			cout << cmds[i] << " ";
+		}
+		printState(device);
+		
+		cout << "\n******UPDATING DEVICE**********\n";
+		
+		device.setID("socket_deviceID"); 
+		cout << "\n****Set ID to 'socket_deviceID' => DeviceID: " << device.getID();
+
+		
+		device.setName("socket_device_name");
+		cout << "\n****Set name to 'socket_device_name' => DeviceName: " << device.getName();
+
+		
+		if (device.setRoom(roomID)) {
+			cout << "\n****Added device to room => DeviceRoom: " << device.getRoom();
+			printRooms();
+		} else cout << "\n****Set room failed";
+		
+		if (device.changeStateValue("connected_state", "on")) {
+			string val;
+			if(device.getStateValue("connected_state", &val)){
+				cout << "\n****Changed 'connected_state' to 'on' (Device_Socket should preappend '(socket)' to the added value) => 'connected_state' value: " << val;
+				printState(device);
+			} else cout << "\n****Get state value 'connected_state' failed";
+		} else cout << "\n****Change state failed";
+		
+		time_t t = time(0);
+		struct tm now = *localtime(&t);
+		char buf[80];
+		strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &now);
+		if(device.doHeartbeat(buf)) {
+			string val = "";
+			if (device.getStateValue("heartbeat_state", &val)) {
+				cout << "\n****Heartbeat set as current time => 'heartbeat_state' value : " << val;
+				printState(device);
+			} else cout << "\n****Get state value 'heartbeat_state' failed";
+		} else cout << "\n****Do heartbeat failed";
+		
+		cout << "\n******REMOVING DEVICE FROM ROOM**********\n";
+		if (device.removeFromRoom())
+			printRooms();
+		else cout << "\n****Remove from room failed";
+	} else cout << "\n******FAILED TO ADD ROOM**********\n";
 	
 	
 }

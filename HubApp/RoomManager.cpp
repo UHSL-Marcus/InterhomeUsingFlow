@@ -30,7 +30,7 @@ void RoomManager::addNewRoom(XMLParse params) {
 	string name;
 	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
 		
-		unique_lock<MutexCheckable> guard(allRoomsMutex);
+		unique_lock<recursive_mutex> guard(allRoomsMutex);
 
 		// Add new room to the database and get the ID back
 		XMLBuild body("SetNewRoom");
@@ -86,8 +86,8 @@ vector<Room> RoomManager::getRooms() {
 
 bool RoomManager::getRoom(string id, Room *out) {
 
-	unique_lock<MutexCheckable> guard;
-	int idx = getRoomIndex(id, &guard);
+	unique_lock<recursive_mutex> guard(allRoomsMutex);
+	int idx = getRoomIndex(id);
 	if (idx > -1) {
 		
 		*out = allRooms[idx];
@@ -106,9 +106,10 @@ void RoomManager::removeRoom(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
+		unique_lock<recursive_mutex> guard(allRoomsMutex);
+		
 		int idx = getRoomIndex(id);
 		if (idx > -1) {
-			unique_lock<MutexCheckable> guard(allRoomsMutex);
 			
 			// remove room from database
 			XMLBuild body("RemoveRoom");
@@ -150,8 +151,8 @@ void RoomManager::updateRoom(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
-		unique_lock<MutexCheckable> guard;
-		int idx = getRoomIndex(id, &guard);
+		unique_lock<recursive_mutex> guard(allRoomsMutex);
+		int idx = getRoomIndex(id);
 		if (idx > -1) {
 			
 			string name;
@@ -197,13 +198,6 @@ void RoomManager::updateRoom(XMLParse params) {
 /**** Private Functions ***/
 
 int RoomManager::getRoomIndex(string id) {
-	unique_lock<MutexCheckable> guard;
-	return getRoomIndex(id, &guard);
-}
-int RoomManager::getRoomIndex(string id, unique_lock<MutexCheckable> *outLock) {
-	
-	if (!allRoomsMutex.is_locked())
-		*outLock = unique_lock<MutexCheckable>(allRoomsMutex);
 	
 	int idx = -1;	
 	for (int i = 0; i < allRooms.size(); i++) {
@@ -215,5 +209,6 @@ int RoomManager::getRoomIndex(string id, unique_lock<MutexCheckable> *outLock) {
 	
 	return idx;
 }
+
 
 RoomManager roomManager;

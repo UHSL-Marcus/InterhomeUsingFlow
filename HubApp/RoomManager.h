@@ -8,17 +8,17 @@
 #include <string>
 #include <vector>
 #include <exception>
-/**** Private Functions ***/
+#include <mutex>
 
 #include "Managers_Handlers.h"
 #include "Room.h"
 #include "XMLUtil.h"
 #include "HTTPRequest.h"
-#include "MutexCheckable.h"
 
 using std::vector;
 using std::string;
 using std::exception;
+using std::recursive_mutex;
 using std::unique_lock;
 
 class RoomManager : public ICommandCallback {
@@ -87,7 +87,7 @@ class RoomManager : public ICommandCallback {
 		void updateRoom(XMLParse params);
 		
 	private:
-		MutexCheckable allRoomsMutex;
+		recursive_mutex allRoomsMutex;
 		vector<Room> allRooms;
 		
 		/** Get the index of a room within the storage vector
@@ -97,7 +97,6 @@ class RoomManager : public ICommandCallback {
 			* @return int 		The index of the room within the storage vector (-1 if not present)
 			*/
 		int getRoomIndex(string id);
-		int getRoomIndex(string id, unique_lock<MutexCheckable> *outLock);
 };
 
 /** The refrence of RoomManager to be used.

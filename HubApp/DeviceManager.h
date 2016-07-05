@@ -7,16 +7,16 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 
 #include "Managers_Handlers.h"
 #include "Device_Socket.h"
 #include "XMLUtil.h"
-#include "MutexCheckable.h"
-#include "MutexUtils.h"
 
 using std::vector;
 using std::string;
+using std::recursive_mutex;
 using std::unique_lock;
 
 class DeviceManager : public ICommandCallback {
@@ -136,63 +136,19 @@ class DeviceManager : public ICommandCallback {
 		void deviceStateChange(XMLParse params);
 		
 	private:
-		MutexCheckable allDevicesMutex;
-		MutexCheckable pendingDevicesMutex;
+		recursive_mutex allDevicesMutex;
+		recursive_mutex pendingDevicesMutex;
 		
 		vector<Device> allDevices;
 		vector<Device> pendingDevices;
 		
-		template<typename... Mutexes>
-		int getDeviceIndexID(string id, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes);
-		int getDeviceIndexID(string id, unique_lock<MutexCheckable> *outLock);
 		int getDeviceIndexID(string id);
-		
-		template<typename... Mutexes>
-		int getDeviceIndexMAC(string mac, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes);
-		int getDeviceIndexMAC(string mac, unique_lock<MutexCheckable> *outLock);
 		int getDeviceIndexMAC(string mac);
-		
-		template<typename... Mutexes>
-		int getPendingDeviceIndex(string mac, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes);
-		int getPendingDeviceIndex(string mac, unique_lock<MutexCheckable> *outLock);
 		int getPendingDeviceIndex(string mac);
 		
 		// timer to remove pending devices after a while
 };
 
 extern DeviceManager deviceManager;
-
-template<typename... Mutexes>
-int DeviceManager::getPendingDeviceIndex(string mac, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes) {
-	if (!pendingDevicesMutex.is_locked()) {
-		unique_lock<MutexCheckable> guard(pendingDevicesMutex, std::defer_lock);
-		MutexUtils::lock(guard, mutexes...);
-	} else 
-		MutexUtils::lock(mutexes...);
-	
-	return getPendingDeviceIndex(mac, outLock);
-}
-
-template<typename... Mutexes>
-int DeviceManager::getDeviceIndexID(string id, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes) {
-	if (!allDevicesMutex.is_locked()) {
-		unique_lock<MutexCheckable> guard(allDevicesMutex, std::defer_lock);
-		MutexUtils::lock(guard, mutexes...);
-	} else 
-		MutexUtils::lock(mutexes...);
-	
-	return getDeviceIndexID(id, outLock);
-}
-
-template<typename... Mutexes>
-int DeviceManager::getDeviceIndexMAC(string mac, unique_lock<MutexCheckable> *outLock, Mutexes& ...mutexes) {
-	if (!allDevicesMutex.is_locked()) {
-		unique_lock<MutexCheckable> guard(allDevicesMutex, std::defer_lock);
-		MutexUtils::lock(guard, mutexes...);
-	} else 
-		MutexUtils::lock(mutexes...);
-	
-	return getDeviceIndexMAC(mac, outLock);
-}
 
 #endif /* DEVICE_MANAGER_H */
