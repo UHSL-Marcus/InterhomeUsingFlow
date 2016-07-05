@@ -26,13 +26,12 @@ void RoomManager::addNewRoom(ICommandCallback *parent, XMLParse params) {
 void RoomManager::addNewRoom(XMLParse params) {
 	
 	bool success = false;
-	std::cout << "\n**add new room";
+	
 	string name;
 	if (params.getStringNode(M_ROOM_NAME_PATH, &name)) {
-		std::cout << "\n**Waiting for Mutex";
-		unique_lock<mutex> guard(allRoomsMutex);
-		std::cout << "\n**Got Mutex";
 		
+		unique_lock<MutexCheckable> guard(allRoomsMutex);
+
 		// Add new room to the database and get the ID back
 		XMLBuild body("SetNewRoom");
 		body.addAttribute("SetNewRoom", "xmlns", "http://tempuri.org/");
@@ -44,40 +43,34 @@ void RoomManager::addNewRoom(XMLParse params) {
 		HTTPRequest req;
 		string response;
 		req.SOAPRequest(body.getXML(), "SetNewRoom", response);
-		std::cout << "\n**Sent SOAP";
 		
 		XMLParse reply(response);
 		
 		string requestOutcome;
 		if (reply.getStringNode("//SetNewRoomResult", &requestOutcome)) {
 			if (requestOutcome.compare("true") == 0) {
-				std::cout << "\n**outcome is true";
 				
 				string id;
 				if (reply.getStringNode("//ID", &id)) {
-					std::cout << "\n**got ID";
+					
 					try {
 						std::stoi(id, NULL, 10); // just testing the ID to make sure it is an int
 						
 						Room room(id, name); // temp
-						std::cout << "\n**created room";
-				
+						
 						int idx = getRoomIndex(name);
 						if (idx < 0) {
-							std::cout << "\n**Adding room " << id;
 							allRooms.push_back(room);
 							success = true;
 						}
 					}
 					catch (exception& e) {
-						
+				
 					}
-					
 				}
 			}
 		}
 	}
-	
 	
 	// send success to UI device 
 	string uiID;
@@ -93,7 +86,7 @@ vector<Room> RoomManager::getRooms() {
 
 bool RoomManager::getRoom(string id, Room *out) {
 
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	int idx = getRoomIndex(id, &guard);
 	if (idx > -1) {
 		
@@ -115,7 +108,7 @@ void RoomManager::removeRoom(XMLParse params) {
 		
 		int idx = getRoomIndex(id);
 		if (idx > -1) {
-			unique_lock<mutex> guard(allRoomsMutex);
+			unique_lock<MutexCheckable> guard(allRoomsMutex);
 			
 			// remove room from database
 			XMLBuild body("RemoveRoom");
@@ -157,7 +150,7 @@ void RoomManager::updateRoom(XMLParse params) {
 	string id;
 	if (params.getStringNode(M_ROOM_ID_PATH, &id)) {
 		
-		unique_lock<mutex> guard;
+		unique_lock<MutexCheckable> guard;
 		int idx = getRoomIndex(id, &guard);
 		if (idx > -1) {
 			
@@ -204,12 +197,13 @@ void RoomManager::updateRoom(XMLParse params) {
 /**** Private Functions ***/
 
 int RoomManager::getRoomIndex(string id) {
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	return getRoomIndex(id, &guard);
 }
-int RoomManager::getRoomIndex(string id, unique_lock<mutex> *outLock) {
-
-	unique_lock<mutex> guard(allRoomsMutex);
+int RoomManager::getRoomIndex(string id, unique_lock<MutexCheckable> *outLock) {
+	
+	if (!allRoomsMutex.is_locked())
+		*outLock = unique_lock<MutexCheckable>(allRoomsMutex);
 	
 	int idx = -1;	
 	for (int i = 0; i < allRooms.size(); i++) {
@@ -219,7 +213,6 @@ int RoomManager::getRoomIndex(string id, unique_lock<mutex> *outLock) {
 		}
 	}
 	
-	*outLock = std::move(guard);
 	return idx;
 }
 

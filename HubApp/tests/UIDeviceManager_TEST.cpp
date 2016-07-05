@@ -27,7 +27,7 @@ void doUIDeviceManager_test() {
 	
 	if(!addedCommands) {
 		uiDeviceManager.setCommandCallbacks();
-			addedCommands = true;
+		addedCommands = true;
 	}
 	
 	XMLParse add1("<packet><from>uidevice1</from><data><ui_device_name>ui device 1 name</ui_device_name></data></packet>");
@@ -38,11 +38,13 @@ void doUIDeviceManager_test() {
 	commandHandler.handleCmd("AddUIDevice", add1);
 	commandHandler.handleCmd("AddUIDevice", add2);
 	
+	threadManager.joinAllThreads();
 	cout << "added ui devices\n";
 	printUIDevices();
 	
 	commandHandler.handleCmd("RemoveUIDevice", remove);
 	
+	threadManager.joinAllThreads();
 	cout << "removed UI device 1\n";
 	printUIDevices();
 	

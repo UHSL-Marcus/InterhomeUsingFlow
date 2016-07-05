@@ -5,6 +5,8 @@
 
 #include "Device.h"
 
+#include <iostream>
+
 /**** Public Functions ***/
 
 
@@ -36,6 +38,7 @@ void Device::setName(string name) {
 }
 
 void Device::setRoom(string room_id) {
+	std::cout << "**Add " << deviceID << " to room " << room_id;
 	roomDeviceMapManager.addDevice(room_id, deviceID);
 }
 

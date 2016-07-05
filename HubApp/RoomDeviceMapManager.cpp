@@ -4,6 +4,8 @@
 
 #include "RoomDeviceMapManager.h"
 
+#include <iostream>
+
 /**** Public Functions ****/
 
 RoomDeviceMapManager::RoomDeviceMapManager() {
@@ -13,7 +15,7 @@ RoomDeviceMapManager::RoomDeviceMapManager() {
 bool RoomDeviceMapManager::addRoom(string id) {
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (!getRoomIterator(id, &itr, &guard)) {
 		vector<string> toInsert;
 		roomDeviceMap.insert(std::pair<string,vector<string> >(id,toInsert));
@@ -26,7 +28,7 @@ bool RoomDeviceMapManager::removeRoom(string id) {
 	
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (getRoomIterator(id, &itr, &guard)) {
 		roomDeviceMap.erase(itr);
 		return true;
@@ -36,9 +38,11 @@ bool RoomDeviceMapManager::removeRoom(string id) {
 
 bool RoomDeviceMapManager::addDevice(string room_id, string device_id) {
 	
+	std::cout << "***Add device";
+	
 	map<string,vector<string> >::iterator itr;
 
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (getRoomIterator(room_id, &itr, &guard)) {
 		vector<string>& devices = itr->second;
 		bool exist = false;
@@ -62,7 +66,7 @@ bool RoomDeviceMapManager::removeDevice(string device_id) {
 	int idx;
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (getDeviceIndexAndRoomIterator(device_id, &itr, &idx, &guard)) {
 		vector<string>& devices = itr->second;
 		devices.erase(devices.begin()+idx);
@@ -76,7 +80,7 @@ bool RoomDeviceMapManager::getDeviceRoom(string id, string* out) {
 	
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (getDeviceIndexAndRoomIterator(id, &itr, NULL, &guard)) {
 		*out = itr->first;
 		return true;
@@ -89,7 +93,7 @@ bool RoomDeviceMapManager::getRoomDevices(string id, vector<string>* out) {
 
 	map<string,vector<string> >::iterator itr;
 	
-	unique_lock<mutex> guard;
+	unique_lock<MutexCheckable> guard;
 	if (getRoomIterator(id, &itr, &guard)) {
 		*out = itr->second;
 		return true;
@@ -101,7 +105,7 @@ vector<string> RoomDeviceMapManager::getRooms() {
 	
 	vector<string> rooms;
 	
-	unique_lock<mutex> guard(roomDeviceMapMutex);
+	unique_lock<MutexCheckable> guard(roomDeviceMapMutex);
 	for (map<string,vector<string> >::iterator itr = roomDeviceMap.begin(); itr != roomDeviceMap.end(); ++itr) {
 		rooms.push_back(itr->first);
 	}
@@ -112,9 +116,10 @@ vector<string> RoomDeviceMapManager::getRooms() {
 
 /**** Private Functions ****/
 
-bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> >::iterator* out, unique_lock<mutex> *outLock) {
+bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> >::iterator* out, unique_lock<MutexCheckable> *outLock) {
 
-	*outLock = unique_lock<mutex>(roomDeviceMapMutex);
+	if (!roomDeviceMapMutex.is_locked()) 
+		*outLock = unique_lock<MutexCheckable>(roomDeviceMapMutex);
 	
 	map<string,vector<string> >::iterator itr = roomDeviceMap.find(id);
 	if (itr != roomDeviceMap.end()) {
@@ -126,9 +131,10 @@ bool RoomDeviceMapManager::getRoomIterator(string id, map<string,vector<string> 
 	return false;
 }
 
-bool RoomDeviceMapManager::getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut, unique_lock<mutex> *outLock) {
+bool RoomDeviceMapManager::getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut, unique_lock<MutexCheckable> *outLock) {
 
-	*outLock = unique_lock<mutex>(roomDeviceMapMutex);
+	if (!roomDeviceMapMutex.is_locked()) 
+		*outLock = unique_lock<MutexCheckable>(roomDeviceMapMutex);
 	
 	for (map<string,vector<string> >::iterator itr = roomDeviceMap.begin(); itr != roomDeviceMap.end(); ++itr) {
 		vector<string> devices = itr->second;

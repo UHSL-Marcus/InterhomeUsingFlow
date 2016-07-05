@@ -84,8 +84,10 @@ using namespace DeviceManager_TEST;
 
 void doDeviceManager_test() {
 	
+	cout << "\n******ADDING UI DEVICE**********\n";
 	XMLParse addUI("<packet><from>tester</from><data><ui_device_name>ui device 1 name</ui_device_name></data></packet>");
 	commandHandler.handleCmd("AddUIDevice", addUI);
+	threadManager.joinAllThreads();
 	
 	XMLParse addRoom1("<packet><guid>0</guid><from>tester</from><to>hub</to><data><room_name>room1</room_name></data></packet>");
 	XMLParse addRoom2("<packet><guid>1</guid><from>tester</from><to>hub</to><data><room_name>room2</room_name></data></packet>");
@@ -99,12 +101,14 @@ void doDeviceManager_test() {
 	
 	commandHandler.handleCmd("AddNewRoom", addRoom1);
 	commandHandler.handleCmd("AddNewRoom", addRoom2);
+	threadManager.joinAllThreads();
 	printRooms();
 	
 	cout << "\n********SENDING NEW DEVICE PRESENCES**********\n";
 	
 	commandHandler.handleCmd("NewDevicePresence", addDevice1);
 	commandHandler.handleCmd("NewDevicePresence", addDevice2);
+	threadManager.joinAllThreads();
 	printDevices();
 	
 	vector<Room> rooms = roomManager.getRooms();
@@ -124,6 +128,7 @@ void doDeviceManager_test() {
 	cout << "\n*********ACTIVATING PENDING DEVICES*************\n";
 	commandHandler.handleCmd("AddPendingDevice", pending1);
 	commandHandler.handleCmd("AddPendingDevice", pending2);
+	threadManager.joinAllThreads();
 	printDevices();
 	printRooms();
 	
@@ -162,6 +167,7 @@ void doDeviceManager_test() {
 	
 	cout << "\n********RECIEVING HEARTBEAT FROM deviceID: " << devices[0].getID() << "*************\n";
 	commandHandler.handleCmd("DeviceHeartbeat", heart);
+	threadManager.joinAllThreads();
 	printDevices();
 	
 	cout << "\n*******SENDING COMMAND TO deviceID: " << devices[1].getID() << "****************\n";
@@ -171,10 +177,12 @@ void doDeviceManager_test() {
 	cout << "\n********RECIEVING STATE CHANGE FROM deviceID: " << devices[1].getID() << "********************";
 	cout << "\nPower to '60w' and voltage to '12v'\n";
 	commandHandler.handleCmd("DeviceStateChanged", stateChange);
+	threadManager.joinAllThreads();
 	printDevices();
 	
 	cout << "\n***********REMOVING deviceID: " << devices[0].getID() << "********************\n";
 	commandHandler.handleCmd("RemoveDevice", remove);
+	threadManager.joinAllThreads();
 	printDevices();
 	printRooms();
 	

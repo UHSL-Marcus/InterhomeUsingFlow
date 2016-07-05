@@ -30,13 +30,13 @@ namespace Device_TEST{
 	}
 	
 	void printState(Device device) {
-		cout << "\n State field names: ";
+		cout << "\nState field names: ";
 		vector<string> names = device.getStateFieldNames();
 		for (int i = 0; i < names.size(); i++) {
 			cout << names[i] << " ";
 		}
 		
-		cout << "\n Values: \n";
+		cout << "\nState values: \n";
 		map<string, string> state = device.getState();
 		for (map<string,string>::iterator itr=state.begin(); itr!=state.end(); ++itr) {
 			cout << itr->first << " => " << itr->second << "\n";
@@ -49,36 +49,39 @@ void doDevice_test() {
 	
 	XMLParse add1("<packet><data><room_name>room1</room_name></data></packet>");
 	roomManager.addNewRoom(add1);
+	threadManager.joinAllThreads();
 	
-	cout << "\n Added Room \n";
+	cout << "\n******ADDING ROOM**********\n";
 	printRooms();
 	
 	Device_Socket device("socket_device1MAC");
-	cout << "\ncreated device\n";
+	cout << "\n******CREATED DEVICE**********\n";
 	
-	cout << "\n Device MAC is: " << device.getMAC();
-	cout << "\n Device Type is: " << device.getType();
-	cout << "\n Commands are: ";
+	cout << "\nDevice MAC is: " << device.getMAC();
+	cout << "\nDevice Type is: " << device.getType();
+	cout << "\nCommands are: ";
 	vector<string> cmds = device.getCommands();
 	for (int i = 0; i < cmds.size(); i++) {
 		cout << cmds[i] << " ";
 	}
 	printState(device);
 	
+	cout << "\n******UPDATING DEVICE**********\n";
 	device.setID("socket_deviceID");
-	cout << "\n set ID to 'socket_deviceID', DeviceID: " << device.getID();
+	
+	cout << "\n****Set ID to 'socket_deviceID', DeviceID: " << device.getID();
 	
 	device.setName("socket_device_name");
-	cout << "\n set name to 'socket_device_name', DeviceName: " << device.getName();
+	cout << "\n****Set name to 'socket_device_name', DeviceName: " << device.getName();
 	
 	device.setRoom("room1");
-	cout << "\n Added device to room 'room1', DeviceRoom: " << device.getRoom();
+	cout << "\n****Added device to room, DeviceRoom: " << device.getRoom();
 	printRooms();
 	
 	device.changeStateValue("connected_state", "on");
 	string val;
 	device.getStateValue("connected_state", &val);
-	cout << "\n changed 'connected_state' to 'on' (Device_Socket should preappend '(socket)' to the added value), 'connected_state' value: " << val;
+	cout << "\n****Changed 'connected_state' to 'on' (Device_Socket should preappend '(socket)' to the added value), 'connected_state' value: " << val;
 	printState(device);
 	
 	time_t t = time(0);
@@ -89,11 +92,11 @@ void doDevice_test() {
 	
 	val = "";
 	device.getStateValue("heartbeat_state", &val);
-	cout << "\n heartbeat set as current time. 'heartbeat_state' value : " << val;
+	cout << "\n****Heartbeat set as current time. 'heartbeat_state' value : " << val;
 	printState(device);
 	
+	cout << "\n******REMOVING DEVICE FROM ROOM**********\n";
 	device.removeFromRoom();
-	cout << "\n Removed device from its room. Device room: " << device.getRoom();
 	printRooms();
 	
 	

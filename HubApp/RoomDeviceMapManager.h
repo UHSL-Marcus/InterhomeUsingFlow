@@ -8,14 +8,13 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <mutex>
 
 #include "CommandHandler.h"
+#include "MutexCheckable.h"
 
 using std::vector;
 using std::string;
 using std::map;
-using std::mutex;
 using std::unique_lock;
 
 class RoomDeviceMapManager {
@@ -84,10 +83,10 @@ class RoomDeviceMapManager {
 		vector<string> getRooms();
 		
 	private:
-		mutex roomDeviceMapMutex;
+		MutexCheckable roomDeviceMapMutex;
 		map<string, vector<string> > roomDeviceMap;
-		bool getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut, unique_lock<mutex> *outLock);
-		bool getRoomIterator(string id, map<string,vector<string> >::iterator* out, unique_lock<mutex> *outLock);
+		bool getDeviceIndexAndRoomIterator(string id, map<string,vector<string> >::iterator* itrOut, int *idxOut, unique_lock<MutexCheckable> *outLock);
+		bool getRoomIterator(string id, map<string,vector<string> >::iterator* out, unique_lock<MutexCheckable> *outLock);
 };
 
 extern RoomDeviceMapManager roomDeviceMapManager;

@@ -21,10 +21,9 @@ void ThreadManager::removeCompletedThreads() {
 	vector<future<void>>& threads = _threads.getVector<future<void>>();
 	
 	for (int i = 0; i < threads.size(); i++) {
-        if (threads[i].wait_for(std::chrono::milliseconds(0)) == future_status::ready) {
+        if (threads[i].wait_for(std::chrono::milliseconds(0)) == future_status::ready) 
 			threads.erase(threads.begin() + i);
-			std::cout << "\n\n***Thread at idx " + std::to_string(i) + " removed";
-		}
+		
     }
 }
 
@@ -34,7 +33,6 @@ void ThreadManager::joinAllThreads() {
 	for (int i = 0; i < threads.size(); i++) {
 		threads[i].wait();
 		threads.erase(threads.begin() + i);
-		std::cout << "\n\n***Thread at idx " + std::to_string(i) + " removed";
 	}
 	
 	if (threads.size() > 0)
