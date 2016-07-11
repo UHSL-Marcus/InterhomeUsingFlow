@@ -21,12 +21,12 @@ void doHTTPRequest_test() {
 	cout << "\n******SENDING REQUEST**********\n";
 	cout << "\nBody: <GetAllDevices xmlns=\"http://tempuri.org/\"/>";
 	
-	string response;
+	string response = "No Response recieved";
 	if (req.SOAPRequest("<GetAllDevices xmlns=\"http://tempuri.org/\"/>", "GetAllDevices", response)) {
 		cout << "\nResponse: \n" << response;
 	}
 	else 
-		cout << "\nRequest Failed";
+		cout << "\nRequest Failed: " << response;
 	
 	
 	

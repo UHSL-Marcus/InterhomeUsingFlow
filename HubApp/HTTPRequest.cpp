@@ -42,6 +42,7 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 	
 	//std::cout   << "\nNew SOAPRequest";
 	bool success = false;
+	stringstream errors;
 	
 	stringstream xmlSS;
 	string messageID = Util::getUID(soapBody);
@@ -127,22 +128,21 @@ bool HTTPRequest::SOAPRequest(string soapBody, string action, string &out) {
 							success = true;
 							
 							//std::cout  << "\nresponse:\n" << out;  
-						}
+						} errors << "\nMessage RelatesTo ID does not match. Response: " << data.dataString;
 					}
 					catch (const pugi::xpath_exception& e)
 					{
 						//std::cout  << "\nException: " << e.what();
 					}
 					
-				}
-			}
-			else 
-			{
-				//std::cout   << "\nresponse:\n" << data.dataString;  
-			}
+				} else errors << "\nNo SOAP Envelope. Response: " << data.dataString;
+			} else errors << "\nHTTP Response not '200 OK'. Response: " << data.dataString;
 			
-		}
-	}
+		} else errors << "\nCurl response not 'OK': " << curl_easy_strerror(response);
+	} else errors << "\nCurl failed to initialise";
+	
+	if (!success)
+		out = errors.str();
 	
 	return success;
 }

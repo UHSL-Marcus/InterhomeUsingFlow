@@ -7,6 +7,7 @@
 
 #include <curl/curl.h>
 #include <string>
+#include <sstream>
 #include <cstring>
 #include "Global.h"
 #include "Util.h"
