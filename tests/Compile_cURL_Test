@@ -1,0 +1,1 @@
+g++ -g cURL_Test.cpp -o curlTest -L/usr/lib/i386-linux-gnu -lcurl

@@ -1,0 +1,1 @@
+g++ -g -I/usr/include/libxml2 -o test XMLSigningTest.cpp -lxml2 -lssl -lcrypto

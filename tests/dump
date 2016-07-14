@@ -1,0 +1,32 @@
+* Hostname was NOT found in DNS cache
+*   Trying 147.197.205.57...
+* Connected to 147.197.205.57 (147.197.205.57) port 443 (#0)
+* successfully set certificate verify locations:
+*   CAfile: none
+  CApath: /etc/ssl/certs
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* Server certificate:
+* 	 subject: CN=ENT-ML15AAF-1.herts.ac.uk
+* 	 start date: 2016-05-09 14:24:32 GMT
+* 	 expire date: 2017-05-09 00:00:00 GMT
+* 	 issuer: CN=ENT-ML15AAF-1.herts.ac.uk
+* 	 SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+> POST /ServiceImplimentation/Start.svc HTTP/1.1
+User-Agent: libcurl-agent/1.0
+Host: 147.197.205.57
+Accept: */*
+Connection: Keep-Alive
+Content-Type: application/soap+xml; charset=utf-8
+Content-Length: 1170
+Expect: 100-continue
+
+< HTTP/1.1 100 Continue
+< HTTP/1.1 200 OK
+< Content-Length: 1167
+< Content-Type: application/soap+xml; charset=utf-8
+* Server Microsoft-IIS/10.0 is not blacklisted
+< Server: Microsoft-IIS/10.0
+< X-Powered-By: ASP.NET
+< Date: Fri, 13 May 2016 08:10:09 GMT
+< 
+* Connection #0 to host 147.197.205.57 left intact
